@@ -1,0 +1,426 @@
+{
+  "runs": [
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "notes": "Default backend policy for ML-KEM primitive comparison."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "pqcp",
+      "backend": "force_c",
+      "notes": "Portable C backend for ML-KEM primitive comparison."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "pqcp",
+      "backend": "force_native",
+      "notes": "Native backend for ML-KEM primitive comparison."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "baseline",
+      "backend": "clean",
+      "notes": "QEMU-only native-C reference baseline for ML-KEM-768 primitive comparison."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_basic_kem_mlkem512",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLKEM_LEVEL_512=y",
+        "CONFIG_PQCP_MLKEM_LEVEL_768=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_1024=n"
+      ],
+      "notes": "QEMU single-level ML-KEM-512 PQCP primitive comparison row without changing production profile semantics."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_basic_kem_mlkem512_baseline",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "baseline",
+      "backend": "clean",
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLKEM_LEVEL_512=y",
+        "CONFIG_PQCP_MLKEM_LEVEL_768=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_1024=n"
+      ],
+      "notes": "QEMU-only native-C reference baseline for ML-KEM-512 primitive comparison."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_basic_kem_mlkem1024",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLKEM_LEVEL_512=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_768=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_1024=y"
+      ],
+      "notes": "QEMU single-level ML-KEM-1024 PQCP primitive comparison row without changing production profile semantics."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_basic_kem_mlkem1024_baseline",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "baseline",
+      "backend": "clean",
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLKEM_LEVEL_512=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_768=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_1024=y"
+      ],
+      "notes": "QEMU-only native-C reference baseline for ML-KEM-1024 primitive comparison."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "notes": "Default backend policy for ML-DSA primitive comparison."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "pqcp",
+      "backend": "force_c",
+      "notes": "Portable C backend for ML-DSA primitive comparison."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "pqcp",
+      "backend": "force_native",
+      "notes": "Native backend for ML-DSA primitive comparison."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "baseline",
+      "backend": "clean",
+      "notes": "QEMU-only native-C reference baseline for ML-DSA-65 primitive comparison."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_basic_sig_mldsa87",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLDSA_LEVEL_44=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_65=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_87=y",
+        "CONFIG_MAIN_STACK_SIZE=196608"
+      ],
+      "notes": "QEMU single-level ML-DSA-87 PQCP primitive comparison row without changing production profile semantics."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_basic_sig_mldsa87_baseline",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "baseline",
+      "backend": "clean",
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLDSA_LEVEL_44=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_65=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_87=y",
+        "CONFIG_MAIN_STACK_SIZE=196608"
+      ],
+      "notes": "QEMU-only native-C reference baseline for ML-DSA-87 primitive comparison."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_basic_sig_mldsa44",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLDSA_LEVEL_44=y",
+        "CONFIG_PQCP_MLDSA_LEVEL_65=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_87=n",
+        "CONFIG_MAIN_STACK_SIZE=196608"
+      ],
+      "notes": "QEMU single-level ML-DSA-44 PQCP primitive comparison row without changing production profile semantics."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_basic_sig_mldsa44_baseline",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "baseline",
+      "backend": "clean",
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLDSA_LEVEL_44=y",
+        "CONFIG_PQCP_MLDSA_LEVEL_65=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_87=n",
+        "CONFIG_MAIN_STACK_SIZE=196608"
+      ],
+      "notes": "QEMU-only native-C reference baseline for ML-DSA-44 primitive comparison."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "NATIVE_LAB",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "notes": "Shared TLS/protocol benchmark using the default backend policy."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "NATIVE_LAB",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "pqcp",
+      "backend": "force_c",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "notes": "Shared TLS/protocol benchmark with the portable C backend."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "NATIVE_LAB",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "pqcp",
+      "backend": "force_native",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "notes": "Shared TLS/protocol benchmark with the native backend."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "notes": "Single-level PQCP protocol benchmark for direct comparison with the native-C baseline."
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "baseline",
+      "backend": "clean",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "notes": "QEMU-only native-C reference baseline for the single-level protocol benchmark."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_bench_protocol_mlkem512_mldsa87",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLKEM_LEVEL_512=y",
+        "CONFIG_PQCP_MLKEM_LEVEL_768=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_1024=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_44=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_65=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_87=y",
+        "CONFIG_MAIN_STACK_SIZE=196608"
+      ],
+      "notes": "QEMU single-level ML-KEM-512 + ML-DSA-87 PQCP protocol benchmark with RTOS metrics enabled."
+    },
+    {
+      "run_id": "qemu_x86_64__coa_qemu_single_level__pqcp_bench_protocol_mlkem512_mldsa87_baseline",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "baseline",
+      "backend": "clean",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLKEM_LEVEL_512=y",
+        "CONFIG_PQCP_MLKEM_LEVEL_768=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_1024=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_44=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_65=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_87=y",
+        "CONFIG_MAIN_STACK_SIZE=196608"
+      ],
+      "notes": "QEMU-only native-C reference baseline for the ML-KEM-512 + ML-DSA-87 protocol benchmark with RTOS metrics enabled."
+    },
+    {
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_basic_kem",
+      "notes": "Real STM32H7 build-only footprint capture for ML-KEM on the default backend policy."
+    },
+    {
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_kem",
+      "implementation": "pqcp",
+      "backend": "force_c",
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_basic_kem",
+      "notes": "Real STM32H7 build-only footprint capture for ML-KEM with the portable C backend."
+    },
+    {
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_basic_sig",
+      "notes": "Real STM32H7 build-only footprint capture for ML-DSA on the default backend policy."
+    },
+    {
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_sig",
+      "implementation": "pqcp",
+      "backend": "force_c",
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_basic_sig",
+      "notes": "Real STM32H7 build-only footprint capture for ML-DSA with the portable C backend."
+    },
+    {
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "suite": "ML-KEM-768+ML-DSA-65",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "run": false,
+      "build": true,
+      "mode": "build_only",
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_bench_protocol",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "notes": "Real STM32H7 build-only footprint capture for the ML-KEM-768 + ML-DSA-65 protocol benchmark on the default backend policy."
+    },
+    {
+      "run_id": "nucleo_h743zi__mcu_minimal__pqcp_bench_protocol__baseline__clean",
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "suite": "ML-KEM-768+ML-DSA-65",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "baseline",
+      "backend": "clean",
+      "run": false,
+      "build": true,
+      "mode": "build_only",
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_bench_protocol",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "notes": "Real STM32H7 build-only footprint capture for the ML-KEM-768 + ML-DSA-65 protocol benchmark on the native-C baseline implementation."
+    },
+    {
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "suite": "ML-KEM-768+ML-DSA-65",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "pqcp",
+      "backend": "force_c",
+      "run": false,
+      "build": true,
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_bench_protocol",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "notes": "Real STM32H7 build-only footprint capture for the ML-KEM-768 + ML-DSA-65 protocol benchmark with the portable C backend."
+    },
+    {
+      "run_id": "nucleo_h743zi__coa_mcu_single_level__pqcp_bench_protocol_mlkem512_mldsa87",
+      "board": "nucleo_h743zi",
+      "profile": "COA_MCU_SINGLE_LEVEL",
+      "suite": "ML-KEM-512+ML-DSA-87",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "pqcp",
+      "backend": "auto",
+      "run": false,
+      "build": true,
+      "mode": "build_only",
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_bench_protocol",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLKEM_LEVEL_512=y",
+        "CONFIG_PQCP_MLKEM_LEVEL_768=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_1024=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_44=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_65=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_87=y",
+        "CONFIG_MAIN_STACK_SIZE=196608"
+      ],
+      "notes": "Real STM32H7 build-only footprint capture for the ML-KEM-512 + ML-DSA-87 protocol benchmark on the default backend policy."
+    },
+    {
+      "run_id": "nucleo_h743zi__coa_mcu_single_level__pqcp_bench_protocol_mlkem512_mldsa87__baseline__clean",
+      "board": "nucleo_h743zi",
+      "profile": "COA_MCU_SINGLE_LEVEL",
+      "suite": "ML-KEM-512+ML-DSA-87",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "baseline",
+      "backend": "clean",
+      "run": false,
+      "build": true,
+      "mode": "build_only",
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_bench_protocol",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLKEM_LEVEL_512=y",
+        "CONFIG_PQCP_MLKEM_LEVEL_768=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_1024=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_44=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_65=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_87=y",
+        "CONFIG_MAIN_STACK_SIZE=196608"
+      ],
+      "notes": "Real STM32H7 build-only footprint capture for the ML-KEM-512 + ML-DSA-87 protocol benchmark on the native-C baseline implementation."
+    },
+    {
+      "run_id": "nucleo_h743zi__coa_mcu_single_level__pqcp_bench_protocol_mlkem512_mldsa87__force_c",
+      "board": "nucleo_h743zi",
+      "profile": "COA_MCU_SINGLE_LEVEL",
+      "suite": "ML-KEM-512+ML-DSA-87",
+      "sample": "pqcp_bench_protocol",
+      "implementation": "pqcp",
+      "backend": "force_c",
+      "run": false,
+      "build": true,
+      "run_mode": "build_only",
+      "app_path": "samples/pqcp_bench_protocol",
+      "overlays": ["overlay-rtos-metrics.conf"],
+      "extra_kconfig": [
+        "CONFIG_PQCP_MLKEM_LEVEL_512=y",
+        "CONFIG_PQCP_MLKEM_LEVEL_768=n",
+        "CONFIG_PQCP_MLKEM_LEVEL_1024=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_44=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_65=n",
+        "CONFIG_PQCP_MLDSA_LEVEL_87=y",
+        "CONFIG_MAIN_STACK_SIZE=196608"
+      ],
+      "notes": "Real STM32H7 build-only footprint capture for the ML-KEM-512 + ML-DSA-87 protocol benchmark with the portable C backend."
+    }
+  ]
+}

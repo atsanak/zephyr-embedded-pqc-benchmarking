@@ -1,0 +1,78 @@
+tests:
+  pqcp.acvp_kat.mlkem_512_keygen:
+    tags:
+      - pqcp
+      - acvp
+      - kat
+    harness: ztest
+    platform_allow:
+      - qemu_x86_64
+    integration_platforms:
+      - qemu_x86_64
+    timeout: 300
+  pqcp.acvp_kat.mlkem_512_encaps:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mlkem_768_keygen:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mlkem_768_encaps:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mlkem_1024_keygen:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mlkem_1024_encaps:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mldsa_44_sign:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mldsa_44_verify:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mldsa_65_sign:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mldsa_65_verify:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mldsa_87_sign:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300
+  pqcp.acvp_kat.mldsa_87_verify:
+    tags: [pqcp, acvp, kat]
+    harness: ztest
+    platform_allow: [qemu_x86_64]
+    integration_platforms: [qemu_x86_64]
+    timeout: 300

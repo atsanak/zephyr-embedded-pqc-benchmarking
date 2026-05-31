@@ -1,0 +1,130 @@
+{
+  "scenarios": [
+    {
+      "name": "negative-protocol-cases",
+      "kem_level": 768,
+      "sig_level": 65,
+      "seed_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+      "message_hex": "616376702d6e656761746976652d63617365",
+      "step_expectations": {
+        "VERIFY_MLDSA_TAMPERED": {
+          "status": "invalid",
+          "response": "RESULT:INVALID"
+        }
+      },
+      "expected_errors": [
+        {
+          "name": "INVALID_SEED_HEX",
+          "command": "SEED:DRBG:0:abc",
+          "response": "ERROR:INVALID_HEX"
+        },
+        {
+          "name": "TRUNCATED_KEYGEN",
+          "command": "KEYGEN:MLKEM",
+          "response": "ERROR:MISSING_ARGS"
+        },
+        {
+          "name": "UNSUPPORTED_MLKEM_LEVEL",
+          "command": "KEYGEN:MLKEM:999:",
+          "response": "ERROR:INVALID_LEVEL"
+        },
+        {
+          "name": "SERIAL_GARBAGE_PREFIX",
+          "command": "\u001b[31mKEYGEN:MLKEM:768:",
+          "response": "ERROR:INVALID_CMD"
+        },
+        {
+          "name": "timeout_partial_frame",
+          "command": "KEYGEN:MLKEM:768:",
+          "append_newline": false,
+          "response_timeout": 7.0,
+          "response": "ERROR:TIMEOUT"
+        },
+        {
+          "name": "INVALID_MLKEM_ENCAPS_HEX",
+          "command": "ENCAPS:MLKEM:768:zz",
+          "response": "ERROR:INVALID_HEX"
+        },
+        {
+          "name": "EMPTY_MLKEM_ENCAPS_PAYLOAD",
+          "command": "ENCAPS:MLKEM:768:",
+          "response": "ERROR:MISSING_ARGS"
+        },
+        {
+          "name": "TRUNCATED_MLKEM_ENCAPS_PAYLOAD",
+          "command": "ENCAPS:MLKEM:768:001122",
+          "response": "ERROR:WRONG_SIZE"
+        },
+        {
+          "name": "OVERSIZE_MLKEM_ENCAPS_PAYLOAD",
+          "command": "ENCAPS:MLKEM:768:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "response": "ERROR:WRONG_SIZE"
+        },
+        {
+          "name": "TRUNCATED_MLKEM_DECAPS_PAYLOAD",
+          "command": "DECAPS:MLKEM:768:001122",
+          "response": "ERROR:WRONG_SIZE"
+        },
+        {
+          "name": "ODD_LENGTH_MLKEM_DECAPS_HEX",
+          "command": "DECAPS:MLKEM:768:0",
+          "response": "ERROR:INVALID_HEX"
+        },
+        {
+          "name": "LOWERCASE_MLKEM_ALG",
+          "command": "KEYGEN:mlkem:768:",
+          "response": "ERROR:INVALID_ALG"
+        },
+        {
+          "name": "TOO_MANY_VERIFY_FIELDS",
+          "command": "VERIFY:MLDSA:65:00:11",
+          "response": "ERROR:INVALID_CMD"
+        },
+        {
+          "name": "STRICT_HELP_FORM",
+          "command": "HELP:",
+          "response": "ERROR:INVALID_CMD"
+        },
+        {
+          "name": "WRONG_SIZE_SIGN",
+          "command": "SIGN:MLDSA:65:00",
+          "response": "ERROR:WRONG_SIZE"
+        },
+        {
+          "name": "INVALID_SIGN_HEX",
+          "command": "SIGN:MLDSA:65:zz",
+          "response": "ERROR:INVALID_HEX"
+        },
+        {
+          "name": "TRUNCATED_VERIFY_PAYLOAD",
+          "command": "VERIFY:MLDSA:65:001122",
+          "response": "ERROR:WRONG_SIZE"
+        },
+        {
+          "name": "TRUNCATED_VERIFY_BOUNDARY_MINUS_ONE",
+          "command": "VERIFY:MLDSA:65:",
+          "repeat_hex": {
+            "byte": "00",
+            "count": 5260
+          },
+          "response": "ERROR:WRONG_SIZE"
+        },
+        {
+          "name": "OVERSIZE_VERIFY_PAYLOAD",
+          "command": "VERIFY:MLDSA:65:",
+          "repeat_hex": {
+            "byte": "00",
+            "count": 6286
+          },
+          "response": "ERROR:WRONG_SIZE"
+        },
+        {
+          "name": "POST_TIMEOUT_HELP_RECOVERY",
+          "kind": "recovery",
+          "command": "HELP",
+          "response": "RESULT:OK"
+        }
+      ]
+    }
+  ]
+}

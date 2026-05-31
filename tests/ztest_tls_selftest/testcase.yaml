@@ -1,0 +1,24 @@
+tests:
+  pqcp.tls_selftest.init_psa:
+    tags:
+      - pqcp
+      - tls
+      - psa
+    harness: ztest
+    platform_allow:
+      - qemu_x86_64
+    integration_platforms:
+      - qemu_x86_64
+    timeout: 180
+
+  pqcp.tls_selftest.run:
+    tags:
+      - pqcp
+      - tls
+      - psa
+    harness: ztest
+    platform_allow:
+      - qemu_x86_64
+    integration_platforms:
+      - qemu_x86_64
+    timeout: 300

@@ -1,0 +1,281 @@
+{
+  "description": "Conservative qemu_x86_64 cost-of-assurance regression guardrails. These ratios are intentionally loose and exist only to catch catastrophic regressions in the PQCP-vs-baseline comparison path.",
+  "comparisons": [
+    {
+      "name": "pqcp-vs-baseline-mlkem768",
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_kem",
+      "algorithm": "MLKEM",
+      "level": 768,
+      "candidate": {
+        "implementation": "pqcp",
+        "backend": "auto",
+        "run_mode": "run"
+      },
+      "baseline": {
+        "implementation": "baseline",
+        "backend": "clean",
+        "run_mode": "run"
+      },
+      "metrics": {
+        "keygen_cycles": {
+          "max_ratio": 5.0
+        },
+        "encaps_cycles": {
+          "max_ratio": 5.0
+        },
+        "decaps_cycles": {
+          "max_ratio": 5.0
+        },
+        "rom_bytes": {
+          "max_ratio": 2.0
+        },
+        "ram_bytes": {
+          "max_ratio": 2.0
+        },
+        "total_stack": {
+          "max_ratio": 3.0
+        }
+      }
+    },
+    {
+      "name": "pqcp-vs-baseline-mldsa65",
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_sig",
+      "algorithm": "MLDSA",
+      "level": 65,
+      "candidate": {
+        "implementation": "pqcp",
+        "backend": "auto",
+        "run_mode": "run"
+      },
+      "baseline": {
+        "implementation": "baseline",
+        "backend": "clean",
+        "run_mode": "run"
+      },
+      "metrics": {
+        "keygen_cycles": {
+          "max_ratio": 5.0
+        },
+        "sign_cycles": {
+          "max_ratio": 5.0
+        },
+        "verify_cycles": {
+          "max_ratio": 5.0
+        },
+        "rom_bytes": {
+          "max_ratio": 2.0
+        },
+        "ram_bytes": {
+          "max_ratio": 2.0
+        },
+        "total_stack": {
+          "max_ratio": 3.0
+        }
+      }
+    },
+    {
+      "name": "pqcp-vs-baseline-mlkem512",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_kem",
+      "algorithm": "MLKEM",
+      "level": 512,
+      "candidate": {
+        "implementation": "pqcp",
+        "backend": "auto",
+        "run_mode": "run"
+      },
+      "baseline": {
+        "implementation": "baseline",
+        "backend": "clean",
+        "run_mode": "run"
+      },
+      "metrics": {
+        "keygen_cycles": {
+          "max_ratio": 6.0
+        },
+        "encaps_cycles": {
+          "max_ratio": 6.0
+        },
+        "decaps_cycles": {
+          "max_ratio": 6.0
+        },
+        "rom_bytes": {
+          "max_ratio": 2.5
+        },
+        "ram_bytes": {
+          "max_ratio": 2.5
+        },
+        "total_stack": {
+          "max_ratio": 3.5
+        }
+      }
+    },
+    {
+      "name": "pqcp-vs-baseline-mldsa87",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_basic_sig",
+      "algorithm": "MLDSA",
+      "level": 87,
+      "candidate": {
+        "implementation": "pqcp",
+        "backend": "auto",
+        "run_mode": "run"
+      },
+      "baseline": {
+        "implementation": "baseline",
+        "backend": "clean",
+        "run_mode": "run"
+      },
+      "metrics": {
+        "keygen_cycles": {
+          "max_ratio": 6.0
+        },
+        "sign_cycles": {
+          "max_ratio": 6.0
+        },
+        "verify_cycles": {
+          "max_ratio": 6.0
+        },
+        "rom_bytes": {
+          "max_ratio": 2.5
+        },
+        "ram_bytes": {
+          "max_ratio": 2.5
+        },
+        "total_stack": {
+          "max_ratio": 4.0
+        }
+      }
+    },
+    {
+      "name": "pqcp-vs-baseline-protocol-mlkem768-mldsa65",
+      "row_type": "protocol",
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_bench_protocol",
+      "selectors": {
+        "key_exchange_algorithm": "MLKEM",
+        "key_exchange_level": 768,
+        "auth_algorithm": "MLDSA",
+        "auth_level": 65,
+        "suite_mode": "pure_pq"
+      },
+      "candidate": {
+        "implementation": "pqcp",
+        "backend": "auto",
+        "run_mode": "run"
+      },
+      "baseline": {
+        "implementation": "baseline",
+        "backend": "clean",
+        "run_mode": "run"
+      },
+      "metrics": {
+        "handshake_time": {
+          "max_ratio": 6.0
+        },
+        "auth_time": {
+          "max_ratio": 4.0
+        },
+        "key_exchange_time": {
+          "max_ratio": 4.0
+        },
+        "handshake_provider_overhead": {
+          "max_ratio": 8.0,
+          "max_candidate": 167.0,
+          "measured_candidate": 95.0
+        },
+        "handshake_transport_overhead_bytes": {
+          "max_ratio": 2.0,
+          "max_candidate": 384.0
+        },
+        "handshake_rtos_jitter_p50": {
+          "max_ratio": 4.0,
+          "max_candidate": 50000.0
+        },
+        "handshake_rtos_jitter_p90": {
+          "max_ratio": 4.0,
+          "max_candidate": 50000.0
+        },
+        "handshake_rtos_jitter_p99": {
+          "max_ratio": 4.0,
+          "max_candidate": 50000.0
+        },
+        "rom_bytes": {
+          "max_ratio": 2.5
+        },
+        "ram_bytes": {
+          "max_ratio": 2.5
+        }
+      }
+    },
+    {
+      "name": "pqcp-vs-baseline-protocol-mlkem512-mldsa87",
+      "row_type": "protocol",
+      "board": "qemu_x86_64",
+      "profile": "COA_QEMU_SINGLE_LEVEL",
+      "sample": "pqcp_bench_protocol",
+      "selectors": {
+        "key_exchange_algorithm": "MLKEM",
+        "key_exchange_level": 512,
+        "auth_algorithm": "MLDSA",
+        "auth_level": 87,
+        "suite_mode": "pure_pq"
+      },
+      "candidate": {
+        "implementation": "pqcp",
+        "backend": "auto",
+        "run_mode": "run"
+      },
+      "baseline": {
+        "implementation": "baseline",
+        "backend": "clean",
+        "run_mode": "run"
+      },
+      "metrics": {
+        "handshake_time": {
+          "max_ratio": 6.0
+        },
+        "auth_time": {
+          "max_ratio": 4.0
+        },
+        "key_exchange_time": {
+          "max_ratio": 4.0
+        },
+        "handshake_provider_overhead": {
+          "max_ratio": 8.0,
+          "max_candidate": 153.0,
+          "measured_candidate": 87.0
+        },
+        "handshake_transport_overhead_bytes": {
+          "max_ratio": 2.0,
+          "max_candidate": 384.0
+        },
+        "handshake_rtos_jitter_p50": {
+          "max_ratio": 4.0,
+          "max_candidate": 50000.0
+        },
+        "handshake_rtos_jitter_p90": {
+          "max_ratio": 4.0,
+          "max_candidate": 50000.0
+        },
+        "handshake_rtos_jitter_p99": {
+          "max_ratio": 4.0,
+          "max_candidate": 50000.0
+        },
+        "rom_bytes": {
+          "max_ratio": 2.5
+        },
+        "ram_bytes": {
+          "max_ratio": 2.5
+        }
+      }
+    }
+  ]
+}

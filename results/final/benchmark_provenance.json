@@ -1,0 +1,57 @@
+{
+  "csv": {
+    "paired_primitive_rows": [
+      "ML-DSA-44/keygen",
+      "ML-DSA-44/sign",
+      "ML-DSA-44/verify",
+      "ML-DSA-65/keygen",
+      "ML-DSA-65/sign",
+      "ML-DSA-65/verify",
+      "ML-DSA-87/keygen",
+      "ML-DSA-87/sign",
+      "ML-DSA-87/verify",
+      "ML-KEM-1024/decaps",
+      "ML-KEM-1024/encaps",
+      "ML-KEM-1024/keygen",
+      "ML-KEM-512/decaps",
+      "ML-KEM-512/encaps",
+      "ML-KEM-512/keygen",
+      "ML-KEM-768/decaps",
+      "ML-KEM-768/encaps",
+      "ML-KEM-768/keygen"
+    ],
+    "path": "results/final/validated_primitive_benchmarks_qemu.csv",
+    "primitive_row_count": 36,
+    "protocol_row_count": 0,
+    "row_count": 36,
+    "sha256": "8cda3b4a68c57a364537818ee55415a322e621da2cc308356c871cb0000cf171"
+  },
+  "generated_at": "2026-04-27T10:55:25.481412+00:00",
+  "generator": "scripts/export_results.py",
+  "git": {
+    "module_branch": "main",
+    "module_dirty": false,
+    "module_sha": "a82ea179d92baa1e37f4dba349ec626a1c5c0e85",
+    "workspace_sha": null
+  },
+  "host": {
+    "machine": "arm64",
+    "python": "3.14.4",
+    "release": "25.4.0",
+    "system": "Darwin"
+  },
+  "matrix": {
+    "path": "scripts/cost_of_assurance_matrix.json",
+    "sha256": "f164a56ab23d2b8da809be75c7b923a180f63d09661dcc59a76634cad088ce84"
+  },
+  "platform": "qemu_x86_64",
+  "public_portfolio_note": "Sanitized from release_check output; absolute local paths removed.",
+  "schema_version": 1,
+  "smoke": true,
+  "tooling": {
+    "ci": false,
+    "west": "West version: v1.5.0",
+    "zephyr_sdk_install_dir": null,
+    "zephyr_toolchain_variant": null
+  }
+}

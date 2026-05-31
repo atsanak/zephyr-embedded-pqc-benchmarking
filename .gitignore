@@ -1,0 +1,46 @@
+# Build output
+build/
+build-*/
+out/
+output/
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+*.a
+*.o
+*.obj
+*.d
+compile_commands.json
+
+# Zephyr/west local workspace state
+.west/
+zephyr/*
+!zephyr/module.yml
+modules/
+bootloader/
+tools/
+
+# Python/local tooling
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated result/log output
+benchmark_results/
+results/local/
+*.log
+
+# Editors and OS files
+.DS_Store
+.vscode/
+.idea/
+.cursor/
+
+# Secrets/local environment
+.env
+.env.*
+*.pem
+*.key

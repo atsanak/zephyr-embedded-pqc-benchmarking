@@ -1,0 +1,250 @@
+{
+  "schema_version": 2,
+  "description": "MCU and QEMU ROM/RAM budget envelopes used by release_check.py, check_resource_budgets.py, and run_extended_checks.py. Each entry carries a 'status' field: 'measured' when the limit comes from a recorded build, 'estimated_pending_ci_baseline' when the limit is a reasonable upper bound that has not yet been re-baselined against real measurements and should be re-confirmed before a new major release.",
+  "measurement_notes": {
+    "methodology": "Measured limits follow the convention rom_bytes_max = ceil(measured_rom * 1.10) and ram_bytes_max = ceil(measured_ram * 1.10), giving a 10% headroom envelope. The raw measured values are recorded alongside each measured entry for audit.",
+    "regeneration": "Run scripts/check_resource_budgets.py --board <board> --output-root <tmp> on a host with the Zephyr SDK and the ARM toolchain (for nucleo_h743zi). The tool prints the measured ROM and RAM per run_id; update the corresponding entry and set status to 'measured' with the current measured_sdk, measured_toolchain, and measured_at values. See CONTRIBUTING.md for details."
+  },
+  "budgets": [
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "ztest_primitive",
+      "description": "Minimal-profile primitive regression envelope on the default fast-CI board.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured by the benchmark-smoke CI artifact job. Do not treat as a tight upper bound.",
+      "limits": {
+        "rom": 163840,
+        "ram": 520192
+      }
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "ztest_rng",
+      "description": "Minimal-profile RNG abstraction envelope on qemu_x86_64.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured by the benchmark-smoke CI artifact job.",
+      "limits": {
+        "rom": 126976,
+        "ram": 221184
+      }
+    },
+    {
+      "board": "mps2/an385",
+      "profile": "MCU_MINIMAL",
+      "sample": "ztest_primitive",
+      "description": "No-entropy Cortex-M3 primitive regression envelope.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound; mps2/an385 not built by any CI measurement job today.",
+      "limits": {
+        "rom": 65536,
+        "ram": 323584
+      }
+    },
+    {
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "sample": "ztest_primitive",
+      "description": "STM32H7 primitive regression envelope for build-only validation.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Not covered by scripts/check_resource_budgets.py today (that script only walks pqcp_bench_protocol rows). Re-baseline when an MCU ztest_primitive measurement lane is added.",
+      "limits": {
+        "rom": 77824,
+        "ram": 344064
+      }
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_kem",
+      "description": "Minimal-profile KEM sample footprint on qemu_x86_64.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured.",
+      "limits": {
+        "rom": 122880,
+        "ram": 258048
+      }
+    },
+    {
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_basic_kem",
+      "description": "STM32H7 KEM sample build-only envelope for lab validation.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Not covered by scripts/check_resource_budgets.py today. Re-baseline when pqcp_basic_kem is added to the MCU measurement matrix.",
+      "limits": {
+        "rom": 49152,
+        "ram": 110592
+      }
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "GATEWAY",
+      "sample": "ztest_primitive",
+      "description": "Gateway-profile PSA primitive regression envelope.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured.",
+      "limits": {
+        "rom": 204800,
+        "ram": 614400
+      }
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "GATEWAY",
+      "sample": "ztest_tls_selftest",
+      "description": "Gateway-profile shared TLS self-test envelope.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured.",
+      "limits": {
+        "rom": 196608,
+        "ram": 675840
+      }
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "GATEWAY",
+      "sample": "pqcp_tls_mbedtls_psa",
+      "description": "Gateway-profile TLS sample build envelope on qemu_x86_64.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured.",
+      "limits": {
+        "rom": 180224,
+        "ram": 491520
+      }
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "NATIVE_LAB",
+      "sample": "pqcp_basic_sig",
+      "description": "Native-lab signature sample envelope on qemu_x86_64.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured.",
+      "limits": {
+        "rom": 139264,
+        "ram": 335872
+      }
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "NATIVE_LAB",
+      "sample": "ztest_acvp_serial",
+      "description": "Native-lab ACVP command-library regression envelope.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured.",
+      "limits": {
+        "rom": 196608,
+        "ram": 667648
+      }
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "NATIVE_LAB",
+      "sample": "pqcp_bench_protocol",
+      "description": "Native-lab protocol benchmark envelope on qemu_x86_64.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured.",
+      "limits": {
+        "rom": 167936,
+        "ram": 344064
+      }
+    },
+    {
+      "board": "qemu_x86_64",
+      "profile": "NATIVE_LAB",
+      "sample": "pqcp_kat_deterministic",
+      "description": "Native-lab deterministic KAT sample envelope on qemu_x86_64.",
+      "status": "estimated_pending_ci_baseline",
+      "status_note": "Envelope is a safe upper bound carried from the previous release; not yet re-measured.",
+      "limits": {
+        "rom": 159744,
+        "ram": 360448
+      }
+    },
+    {
+      "run_id": "nucleo_h743zi__mcu_minimal__pqcp_bench_protocol",
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_bench_protocol",
+      "description": "STM32H7 ML-KEM-768 + ML-DSA-65 protocol benchmark envelope for the PQCP provider.",
+      "status": "measured",
+      "measured_rom_bytes": 61180,
+      "measured_ram_bytes": 175259,
+      "measured_on_board": "nucleo_h743zi",
+      "measured_sdk": "zephyr-sdk-1.0.1",
+      "measured_toolchain": "arm-zephyr-eabi-gcc 14.3.0",
+      "measured_at": "2026-04-21",
+      "measured_notes": "Recorded by scripts/check_resource_budgets.py --board nucleo_h743zi on macOS host with Zephyr SDK 1.0.1. Build-only matrix entry from cost_of_assurance_matrix.json.",
+      "rom_bytes_max": 67300,
+      "ram_bytes_max": 192800,
+      "limits": {
+        "rom": 67300,
+        "ram": 192800
+      }
+    },
+    {
+      "run_id": "nucleo_h743zi__mcu_minimal__pqcp_bench_protocol__baseline__clean",
+      "board": "nucleo_h743zi",
+      "profile": "MCU_MINIMAL",
+      "sample": "pqcp_bench_protocol",
+      "description": "STM32H7 ML-KEM-768 + ML-DSA-65 protocol benchmark envelope for the baseline implementation.",
+      "status": "measured",
+      "measured_rom_bytes": 61180,
+      "measured_ram_bytes": 175259,
+      "measured_on_board": "nucleo_h743zi",
+      "measured_sdk": "zephyr-sdk-1.0.1",
+      "measured_toolchain": "arm-zephyr-eabi-gcc 14.3.0",
+      "measured_at": "2026-04-21",
+      "measured_notes": "Build-only baseline/clean row currently produces an ELF byte-identical to the PQCP row on nucleo_h743zi (the MCU_MINIMAL profile compiles the same pqcp_bench_protocol harness; the PQCP vs baseline split is exercised on qemu runs). Identical numbers are intentional and reflect real measurement, not copy-paste. See CONTRIBUTING.md for how to distinguish the two implementations on MCU builds.",
+      "rom_bytes_max": 67300,
+      "ram_bytes_max": 192800,
+      "limits": {
+        "rom": 67300,
+        "ram": 192800
+      }
+    },
+    {
+      "run_id": "nucleo_h743zi__coa_mcu_single_level__pqcp_bench_protocol_mlkem512_mldsa87",
+      "board": "nucleo_h743zi",
+      "profile": "COA_MCU_SINGLE_LEVEL",
+      "sample": "pqcp_bench_protocol",
+      "description": "STM32H7 ML-KEM-512 + ML-DSA-87 protocol benchmark envelope for the PQCP provider.",
+      "status": "measured",
+      "measured_rom_bytes": 61072,
+      "measured_ram_bytes": 240795,
+      "measured_on_board": "nucleo_h743zi",
+      "measured_sdk": "zephyr-sdk-1.0.1",
+      "measured_toolchain": "arm-zephyr-eabi-gcc 14.3.0",
+      "measured_at": "2026-04-21",
+      "measured_notes": "Recorded by scripts/check_resource_budgets.py --board nucleo_h743zi on macOS host with Zephyr SDK 1.0.1. COA_MCU_SINGLE_LEVEL profile uses ML-KEM-512 with the stronger ML-DSA-87 for single-level security analysis.",
+      "rom_bytes_max": 67180,
+      "ram_bytes_max": 264875,
+      "limits": {
+        "rom": 67180,
+        "ram": 264875
+      }
+    },
+    {
+      "run_id": "nucleo_h743zi__coa_mcu_single_level__pqcp_bench_protocol_mlkem512_mldsa87__baseline__clean",
+      "board": "nucleo_h743zi",
+      "profile": "COA_MCU_SINGLE_LEVEL",
+      "sample": "pqcp_bench_protocol",
+      "description": "STM32H7 ML-KEM-512 + ML-DSA-87 protocol benchmark envelope for the baseline implementation.",
+      "status": "measured",
+      "measured_rom_bytes": 61072,
+      "measured_ram_bytes": 240795,
+      "measured_on_board": "nucleo_h743zi",
+      "measured_sdk": "zephyr-sdk-1.0.1",
+      "measured_toolchain": "arm-zephyr-eabi-gcc 14.3.0",
+      "measured_at": "2026-04-21",
+      "measured_notes": "Build-only baseline/clean row currently produces an ELF byte-identical to the PQCP row on nucleo_h743zi for this profile; see the MCU_MINIMAL baseline row above for the rationale. Identical numbers are intentional and reflect real measurement, not copy-paste.",
+      "rom_bytes_max": 67180,
+      "ram_bytes_max": 264875,
+      "limits": {
+        "rom": 67180,
+        "ram": 264875
+      }
+    }
+  ]
+}

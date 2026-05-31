@@ -1,0 +1,13 @@
+tests:
+  pqcp.ct_smoke:
+    tags:
+      - pqcp
+      - security
+      - ct
+    harness: ztest
+    platform_allow:
+      - qemu_x86_64
+      - nucleo_h743zi
+    integration_platforms:
+      - qemu_x86_64
+    timeout: 180

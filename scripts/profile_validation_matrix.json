@@ -1,0 +1,76 @@
+{
+  "MCU_MINIMAL": [
+    {
+      "board": "qemu_x86_64",
+      "target": "tests/ztest_primitive",
+      "notes": "Primitive regression baseline for the minimal production profile."
+    },
+    {
+      "board": "qemu_x86_64",
+      "target": "tests/ztest_rng",
+      "notes": "RNG backend regression baseline for the minimal production profile."
+    },
+    {
+      "board": "mps2/an385",
+      "target": "tests/ztest_primitive",
+      "overlay": "overlay-no-entropy.conf",
+      "notes": "Entropy-free Cortex-M validation path."
+    },
+    {
+      "board": "nucleo_h743zi",
+      "target": "tests/ztest_primitive",
+      "notes": "Real STM32H7 MCU primitive regression baseline."
+    },
+    {
+      "board": "qemu_x86_64",
+      "target": "samples/pqcp_basic_kem",
+      "notes": "Metric-emitting sample smoke test."
+    },
+    {
+      "board": "nucleo_h743zi",
+      "target": "samples/pqcp_basic_kem",
+      "notes": "Real STM32H7 MCU sample build for integrator-oriented validation."
+    }
+  ],
+  "GATEWAY": [
+    {
+      "board": "qemu_x86_64",
+      "target": "tests/ztest_primitive",
+      "overlay": "overlay-psa.conf",
+      "notes": "PSA driver coverage for the gateway profile."
+    },
+    {
+      "board": "qemu_x86_64",
+      "target": "tests/ztest_tls_selftest",
+      "notes": "Self-test coverage for the TLS/PSA shared path."
+    },
+    {
+      "board": "qemu_x86_64",
+      "target": "samples/pqcp_tls_mbedtls_psa",
+      "overlay": "overlay-selftest.conf",
+      "notes": "TLS sample smoke test without host networking."
+    }
+  ],
+  "NATIVE_LAB": [
+    {
+      "board": "qemu_x86_64",
+      "target": "samples/pqcp_basic_sig",
+      "notes": "Primitive metric sample under the multilevel lab profile."
+    },
+    {
+      "board": "qemu_x86_64",
+      "target": "tests/ztest_acvp_serial",
+      "notes": "Programmatic ACVP command and negative-path coverage."
+    },
+    {
+      "board": "qemu_x86_64",
+      "target": "samples/pqcp_bench_protocol",
+      "notes": "Protocol benchmark coverage with structured metrics."
+    },
+    {
+      "board": "qemu_x86_64",
+      "target": "samples/pqcp_kat_deterministic",
+      "notes": "Deterministic KAT smoke test for lab-only flows."
+    }
+  ]
+}

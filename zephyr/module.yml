@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: LicenseRef-Proprietary-Collaborative-Evaluation
+# PQCP Zephyr Trust Stack - Module Registration
+
+name: pqcp_zephyr_trust_stack
+
+build:
+  cmake: .
+  kconfig: Kconfig

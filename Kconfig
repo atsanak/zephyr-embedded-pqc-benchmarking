@@ -1,0 +1,808 @@
+# SPDX-License-Identifier: LicenseRef-Proprietary-Collaborative-Evaluation
+# PQCP Zephyr Trust Stack - Kconfig Configuration
+#
+# Post-Quantum Cryptography Package for Zephyr RTOS
+# Implements ML-KEM (FIPS-203) and ML-DSA (FIPS-204)
+
+menuconfig PQCP
+	bool "PQ Code Package - Post-Quantum Cryptography"
+	help
+	  Enable the PQ Code Package post-quantum cryptography module.
+	  This provides ML-KEM (FIPS-203) and ML-DSA (FIPS-204) implementations
+	  using mlkem-native and mldsa-native libraries.
+
+if PQCP
+
+# =============================================================================
+# ML-KEM (FIPS-203) Configuration
+# =============================================================================
+menu "ML-KEM (FIPS-203) Configuration"
+
+config PQCP_MLKEM
+	bool "Enable ML-KEM support"
+	default y
+	help
+	  Enable ML-KEM (Module-Lattice Key Encapsulation Mechanism) support.
+	  ML-KEM is standardized in FIPS-203.
+
+if PQCP_MLKEM
+
+config PQCP_MLKEM_LEVEL_512
+	bool "ML-KEM-512 (NIST Level 1)"
+	default n
+	help
+	  Enable ML-KEM-512 providing NIST security level 1.
+	  Public key: 800 bytes, Ciphertext: 768 bytes.
+
+config PQCP_MLKEM_LEVEL_768
+	bool "ML-KEM-768 (NIST Level 3)"
+	default y
+	help
+	  Enable ML-KEM-768 providing NIST security level 3.
+	  Public key: 1184 bytes, Ciphertext: 1088 bytes.
+	  This is the recommended default for most applications.
+
+config PQCP_MLKEM_LEVEL_1024
+	bool "ML-KEM-1024 (NIST Level 5)"
+	default n
+	help
+	  Enable ML-KEM-1024 providing NIST security level 5.
+	  Public key: 1568 bytes, Ciphertext: 1568 bytes.
+
+config PQCP_MLKEM_MULTI_LEVEL
+	bool "Multi-level ML-KEM build"
+	default n
+	help
+	  Build a single library that supports multiple ML-KEM security levels
+	  at runtime. This increases code size but allows runtime level selection.
+
+config PQCP_MLKEM_MONOLITHIC
+	bool "Monolithic ML-KEM build (single translation unit)"
+	default n
+	depends on !SOC_FAMILY_ARM
+	help
+	  Build ML-KEM as a single translation unit for potential LTO benefits.
+	  This is primarily useful for host/native_sim builds and is not
+	  recommended for MCU targets due to increased peak memory during
+	  compilation.
+
+endif # PQCP_MLKEM
+endmenu
+
+# =============================================================================
+# ML-DSA (FIPS-204) Configuration
+# =============================================================================
+menu "ML-DSA (FIPS-204) Configuration"
+
+config PQCP_MLDSA
+	bool "Enable ML-DSA support"
+	default y
+	help
+	  Enable ML-DSA (Module-Lattice Digital Signature Algorithm) support.
+	  ML-DSA is standardized in FIPS-204.
+
+if PQCP_MLDSA
+
+config PQCP_MLDSA_LEVEL_44
+	bool "ML-DSA-44 (NIST Level 2)"
+	default n
+	help
+	  Enable ML-DSA-44 providing NIST security level 2.
+	  Public key: 1312 bytes, Signature: 2420 bytes.
+
+config PQCP_MLDSA_LEVEL_65
+	bool "ML-DSA-65 (NIST Level 3)"
+	default y
+	help
+	  Enable ML-DSA-65 providing NIST security level 3.
+	  Public key: 1952 bytes, Signature: 3293 bytes.
+	  This is the recommended default for most applications.
+
+config PQCP_MLDSA_LEVEL_87
+	bool "ML-DSA-87 (NIST Level 5)"
+	default n
+	help
+	  Enable ML-DSA-87 providing NIST security level 5.
+	  Public key: 2592 bytes, Signature: 4595 bytes.
+
+config PQCP_MLDSA_MULTI_LEVEL
+	bool "Multi-level ML-DSA build"
+	default n
+	help
+	  Build a single library that supports multiple ML-DSA security levels
+	  at runtime. This increases code size but allows runtime level selection.
+
+config PQCP_MLDSA_STREAMING
+	bool "ML-DSA streaming API"
+	default y
+	help
+	  Enable streaming hash-based signing for large messages. This allows
+	  signing messages that exceed available RAM by processing in chunks.
+
+config PQCP_MLDSA_MONOLITHIC
+	bool "Monolithic ML-DSA build (single translation unit)"
+	default n
+	depends on !SOC_FAMILY_ARM
+	help
+	  Build ML-DSA as a single translation unit. Primarily useful for
+	  host/native_sim builds.
+
+endif # PQCP_MLDSA
+endmenu
+
+# =============================================================================
+# RNG Configuration
+# =============================================================================
+menu "Random Number Generator Configuration"
+
+choice PQCP_RNG_MODE
+	prompt "RNG Backend"
+	default PQCP_RNG_ZEPHYR_ENTROPY
+
+config PQCP_RNG_ZEPHYR_ENTROPY
+	bool "Zephyr Entropy (sys_csrand_get)"
+	depends on ENTROPY_GENERATOR
+	help
+	  Use Zephyr's cryptographically secure random number generator
+	  (sys_csrand_get) which is backed by hardware entropy sources.
+	  This is the recommended option for production use.
+
+config PQCP_RNG_PSA
+	bool "PSA Crypto RNG"
+	depends on MBEDTLS_PSA_CRYPTO_C || BUILD_WITH_TFM
+	help
+	  Use PSA Crypto's psa_generate_random() for random number generation.
+	  This option is useful when PSA Crypto is already in use.
+
+config PQCP_RNG_CUSTOM
+	bool "Custom RNG (application-provided)"
+	help
+	  Allow application to register a custom RNG implementation.
+	  The application must call pqcp_rng_register() before using
+	  any PQCP cryptographic operations.
+
+endchoice
+
+config PQCP_RNG_DETERMINISTIC_TEST
+	bool "Deterministic RNG for testing (DANGEROUS)"
+	depends on PQCP_RNG_CUSTOM
+	help
+	  WARNING: This option is for testing and ACVP validation ONLY.
+	  DO NOT enable this in production builds.
+
+	  Enables a deterministic DRBG that can be seeded with known values
+	  for Known Answer Tests (KAT) and ACVP test vectors.
+
+endmenu
+
+# =============================================================================
+# Backend Configuration
+# =============================================================================
+menu "Implementation Backend Configuration"
+
+choice PQCP_IMPLEMENTATION_PROVIDER
+	prompt "Cryptographic provider family"
+	default PQCP_IMPLEMENTATION_PQCP
+
+config PQCP_IMPLEMENTATION_PQCP
+	bool "PQ Code Package (default)"
+	help
+	  Use the in-tree PQ Code Package implementations (`mlkem-native` and
+	  `mldsa-native`). This is the production-oriented default and the only
+	  provider family validated across the full MCU profile and PSA paths.
+
+config PQCP_IMPLEMENTATION_BASELINE
+	bool "Baseline native-C reference provider (QEMU only)"
+	depends on BOARD_QEMU_X86_64
+	depends on ((PQCP_MLKEM_LEVEL_512 && !PQCP_MLKEM_LEVEL_768 && !PQCP_MLKEM_LEVEL_1024) || \
+		    (PQCP_MLKEM_LEVEL_768 && !PQCP_MLKEM_LEVEL_512 && !PQCP_MLKEM_LEVEL_1024) || \
+		    (PQCP_MLKEM_LEVEL_1024 && !PQCP_MLKEM_LEVEL_512 && !PQCP_MLKEM_LEVEL_768))
+	depends on ((PQCP_MLDSA_LEVEL_44 && !PQCP_MLDSA_LEVEL_65 && !PQCP_MLDSA_LEVEL_87) || \
+		    (PQCP_MLDSA_LEVEL_65 && !PQCP_MLDSA_LEVEL_44 && !PQCP_MLDSA_LEVEL_87) || \
+		    (PQCP_MLDSA_LEVEL_87 && !PQCP_MLDSA_LEVEL_44 && !PQCP_MLDSA_LEVEL_65))
+	depends on !PQCP_MLKEM_MULTI_LEVEL && !PQCP_MLDSA_MULTI_LEVEL
+	help
+	  Use the portable C backend paths from mlkem-native and mldsa-native for
+	  host-side cost-of-assurance comparisons on qemu_x86_64. The current
+	  baseline provider supports single-level ML-KEM-512 / ML-KEM-768 /
+	  ML-KEM-1024 and single-level ML-DSA-44 / ML-DSA-65 / ML-DSA-87 builds
+	  behind the same Zephyr-facing APIs as the production PQCP provider family.
+
+	  This option is intentionally limited to QEMU comparison runs. It is not a
+	  production provider family, does not participate in PSA-driver validation,
+	  and must not be used to justify deterministic RNG or MCU-only shortcuts in
+	  production-style benchmarking.
+
+endchoice
+
+choice PQCP_BACKEND
+	prompt "Implementation Backend"
+	default PQCP_BACKEND_AUTO
+
+config PQCP_BACKEND_AUTO
+	bool "Automatic (detect ISA features)"
+	depends on PQCP_IMPLEMENTATION_PQCP
+	help
+	  Automatically select the best available backend based on detected
+	  ISA features at compile time. Uses native assembly backends when
+	  available (AArch64 NEON, x86-64 AVX2, RISC-V RVV) and falls back
+	  to portable C otherwise.
+
+config PQCP_BACKEND_FORCE_C
+	bool "Force portable C backend"
+	depends on PQCP_IMPLEMENTATION_PQCP
+	help
+	  Force use of the portable C backend even when native backends
+	  are available. This is useful for testing and comparison purposes.
+
+config PQCP_BACKEND_FORCE_NATIVE
+	bool "Force native backend (advanced)"
+	depends on PQCP_IMPLEMENTATION_PQCP
+	help
+	  Force use of native assembly backends. This may cause build
+	  failures or runtime errors on unsupported architectures.
+	  Only use this if you know your target supports the required
+	  ISA extensions.
+
+config PQCP_BACKEND_CLEAN
+	bool "Native-C/reference backend label"
+	depends on PQCP_IMPLEMENTATION_BASELINE
+	help
+	  Metadata-only backend label used by the QEMU baseline implementation
+	  family in cost-of-assurance experiments. The baseline provider uses the
+	  portable C backend paths from mlkem-native and mldsa-native, so this
+	  option exists mainly to keep benchmark metadata explicit and comparable
+	  to the PQCP provider family.
+
+endchoice
+
+config PQCP_FIPS202_EXTERNAL
+	bool "Use external FIPS-202 implementation"
+	default n
+	help
+	  Use an external SHA-3/SHAKE implementation instead of the one
+	  bundled with mlkem-native and mldsa-native. This allows sharing
+	  a single FIPS-202 implementation across the system.
+
+config PQCP_LIBOQS_EXPERIMENTAL
+	bool "Enable experimental external-provider inventory"
+	default n
+	help
+	  Enable metadata for optional schemes that are outside the native
+	  provider families. This option is inventory and policy plumbing only:
+	  it is not a production default, does not change the existing crypto
+	  APIs, and does not select an implementation for the native families.
+
+config PQCP_REDUCE_RAM
+	bool "Reduced RAM mode"
+	default n
+	help
+	  Enable reduced RAM mode which trades performance for lower
+	  memory usage. This is useful on very constrained devices.
+
+endmenu
+
+# =============================================================================
+# Provider Contract Reporting
+# =============================================================================
+menu "Provider Contract Reporting"
+
+config PQCP_PROVIDER_CONTRACT
+	bool "Enable provider contract reporting"
+	default y
+	help
+	  Enable firmware-visible provider contract helpers. These helpers report
+	  which provider family and backend selector were compiled into the image
+	  and validate that native ML-KEM and ML-DSA families are still bound to
+	  the PQ Code Package native sources.
+
+	  This option is evidence plumbing only. It does not select an
+	  implementation, import external code, or change cryptographic behavior.
+
+endmenu
+
+# =============================================================================
+# Firmware Build Manifest
+# =============================================================================
+menu "Firmware Build Manifest"
+
+config PQCP_BUILD_MANIFEST
+	bool "Enable firmware build manifest reporting"
+	default y
+	help
+	  Enable C helpers that report the firmware-visible build manifest:
+	  PQCP version, Zephyr version, board, enabled PQC level masks, selected
+	  profiles, RNG mode, and provider-contract availability. The emitted
+	  PQCP_BUILD_MANIFEST marker is intended for QEMU/device transcripts and
+	  release evidence binding.
+
+	  This option does not select cryptographic algorithms and does not change
+	  ACVP, benchmark, or public crypto API behavior.
+
+endmenu
+
+# =============================================================================
+# Firmware Evidence Session
+# =============================================================================
+menu "Firmware Evidence Session"
+
+config PQCP_EVIDENCE_SESSION
+	bool "Enable firmware evidence session markers"
+	default y
+	help
+	  Enable C helpers that wrap firmware-visible evidence output in a
+	  begin/event/end session. The session records which high-level evidence
+	  markers were required, which were observed, and whether any marker failed
+	  or appeared twice. The emitted PQCP_EVIDENCE_SESSION_* markers make QEMU
+	  or device transcripts easier to replay for completeness.
+
+	  This option is evidence plumbing only. It does not select cryptographic
+	  algorithms and does not change ACVP, benchmark, or public crypto API
+	  behavior.
+
+endmenu
+
+# =============================================================================
+# Firmware Evidence Transcript Replay
+# =============================================================================
+menu "Firmware Evidence Transcript Replay"
+
+config PQCP_EVIDENCE_TRANSCRIPT
+	bool "Enable firmware evidence transcript replay verifier"
+	depends on PQCP_ASSURANCE_STATUS && PQCP_EVIDENCE_SESSION
+	default n
+	help
+	  Enable a small C replay verifier for the stable firmware evidence
+	  transcript grammar. The verifier consumes captured UART/QEMU transcript
+	  lines, validates hashes and nonce fields, and cross-checks
+	  PQCP_EVIDENCE_SESSION_* summaries against the concrete evidence markers
+	  that actually appeared in the transcript.
+
+	  This option is evidence plumbing only. It does not select cryptographic
+	  algorithms and does not change ACVP, benchmark, or public crypto API
+	  behavior.
+
+endmenu
+
+# =============================================================================
+# Firmware Policy Evidence
+# =============================================================================
+menu "Firmware Policy Evidence"
+
+config PQCP_FIRMWARE_POLICY
+	bool "Enable firmware policy/readiness evidence"
+	depends on PQCP_BUILD_MANIFEST && PQCP_PROVIDER_CONTRACT
+	default y
+	help
+	  Enable C helpers that evaluate firmware-visible profile, provider,
+	  algorithm-level, and RNG constraints and emit a stable
+	  PQCP_FIRMWARE_POLICY marker. The marker records whether the local image
+	  satisfies its derived firmware policy and, on failure, exposes a blocker
+	  bit mask for transcript replay.
+
+	  This option is evidence plumbing only. It does not select cryptographic
+	  algorithms and does not change ACVP, benchmark, or public crypto API
+	  behavior.
+
+endmenu
+
+# =============================================================================
+# Firmware Capability Descriptor
+# =============================================================================
+menu "Firmware Capability Descriptor"
+
+config PQCP_CAPABILITY_DESCRIPTOR
+	bool "Enable firmware capability descriptor"
+	depends on PQCP_BUILD_MANIFEST && PQCP_PROVIDER_CONTRACT
+	depends on PQCP_FIRMWARE_POLICY
+	default y
+	help
+	  Enable a compact C descriptor that summarizes firmware-visible PQC
+	  capability, provider-family policy, profile readiness, and compiled
+	  evidence plumbing in a stable PQCP_CAPABILITY_DESCRIPTOR marker. This is
+	  intended for QEMU/device transcripts and partner review; it is not a
+	  certification claim and it does not select cryptographic providers.
+
+	  This option is evidence plumbing only. It does not change public crypto
+	  APIs, ACVP wire formats, or benchmark row ordering.
+
+endmenu
+
+# =============================================================================
+# Firmware Scorecard Evidence
+# =============================================================================
+menu "Firmware Scorecard Evidence"
+
+config PQCP_FIRMWARE_SCORECARD
+	bool "Enable firmware evidence scorecard"
+	depends on PQCP_ASSURANCE_STATUS && PQCP_BUILD_MANIFEST
+	depends on PQCP_PROVIDER_CONTRACT && PQCP_FIRMWARE_POLICY
+	depends on PQCP_CAPABILITY_DESCRIPTOR && PQCP_EVIDENCE_SESSION
+	default y
+	help
+	  Enable a compact C appraisal marker that evaluates the current
+	  firmware-visible evidence chain before the assurance status is emitted.
+	  The marker reports blocking evidence issues, non-blocking warnings,
+	  production interpretation state, required session events, artifact count,
+	  and a deterministic readiness score.
+
+	  This option is evidence plumbing only. It does not select cryptographic
+	  algorithms and does not change ACVP, benchmark, or public crypto API
+	  behavior.
+
+endmenu
+
+# =============================================================================
+# Firmware Evidence Runner
+# =============================================================================
+menu "Firmware Evidence Runner"
+
+config PQCP_FIRMWARE_EVIDENCE
+	bool "Enable reusable firmware evidence runner"
+	depends on PQCP_ASSURANCE_STATUS && PQCP_BUILD_MANIFEST
+	depends on PQCP_PROVIDER_CONTRACT && PQCP_FIRMWARE_POLICY
+	depends on PQCP_CAPABILITY_DESCRIPTOR && PQCP_FIRMWARE_SCORECARD
+	depends on PQCP_EVIDENCE_SESSION
+	default y
+	help
+	  Enable a reusable C runner that emits the complete firmware evidence
+	  transcript in a fixed order: evidence-session begin, build manifest,
+	  provider contract, firmware policy, capability descriptor, scorecard,
+	  assurance status, optional artifact event, device evidence, and
+	  evidence-session end. Samples and downstream firmware can use this helper
+	  instead of hand-assembling evidence marker sequences.
+
+	  This option is evidence plumbing only. It does not select cryptographic
+	  algorithms and does not change ACVP, benchmark, or public crypto API
+	  behavior.
+
+endmenu
+
+# =============================================================================
+# Firmware Assurance Status
+# =============================================================================
+menu "Firmware Assurance Status"
+
+config PQCP_ASSURANCE_STATUS
+	bool "Enable firmware assurance status helpers"
+	default n
+	help
+	  Enable reusable C helpers that validate and emit stable
+	  PQCP_ASSURANCE_STATUS, PQCP_ASSURANCE_ARTIFACT, and
+	  PQCP_DEVICE_EVIDENCE markers. These markers bind firmware-visible
+	  release evidence to hashes generated by the local assurance tooling.
+
+	  This option does not enable cryptographic algorithms by itself and does
+	  not change ACVP, benchmark, or public crypto API behavior.
+
+endmenu
+
+# =============================================================================
+# PSA Driver Configuration
+# =============================================================================
+menu "PSA Crypto Driver Configuration"
+
+config PQCP_PSA_DRIVER
+	bool "Enable PSA Crypto driver shims"
+	depends on MBEDTLS_PSA_CRYPTO_C || BUILD_WITH_TFM
+	default y if MBEDTLS_PSA_CRYPTO_C
+	help
+	  Enable PSA Crypto driver shims for ML-DSA and ML-KEM.
+	  This allows using PQCP implementations through the standard
+	  PSA Crypto API.
+
+if PQCP_PSA_DRIVER
+
+config PQCP_PSA_DRIVER_MLDSA
+	bool "ML-DSA PSA driver"
+	default y
+	depends on PQCP_MLDSA
+	help
+	  Enable PSA Crypto driver for ML-DSA operations including
+	  key generation, signing, and verification.
+
+config PQCP_PSA_DRIVER_MLKEM
+	bool "ML-KEM PSA driver"
+	default y
+	depends on PQCP_MLKEM
+	help
+	  Enable PSA Crypto driver for ML-KEM operations including
+	  key generation, encapsulation, and decapsulation.
+
+endif # PQCP_PSA_DRIVER
+endmenu
+
+# =============================================================================
+# Shared TLS Self-Test Support
+# =============================================================================
+menu "Shared TLS Self-Test Support"
+
+config PQCP_TLS_SELFTEST
+	bool "Enable shared TLS self-test helper"
+	depends on PQCP_MLKEM && PQCP_MLDSA
+	default y if PQCP_PROFILE_GATEWAY
+	help
+	  Enable the shared offline TLS self-test helper used by the TLS sample,
+	  protocol benchmark sample, and dedicated ztest coverage.
+
+	  This helper exercises the same PQC-heavy ML-KEM and ML-DSA flow across
+	  those paths and emits structured PQCP_METRIC rows when requested.
+	  PSA initialization inside the helper remains optional at runtime and is
+	  only available in builds that also enable MBEDTLS_PSA_CRYPTO_C or TFM.
+
+endmenu
+
+# =============================================================================
+# Boot Self-Verification
+# =============================================================================
+menu "Boot Self-Verification"
+
+config PQCP_KAT_BOOT_VERIFY
+	bool "Run primitive self-verification at boot"
+	default n
+	depends on PQCP_RNG_DETERMINISTIC_TEST
+	help
+	  When enabled, the module installs a SYS_INIT hook at the
+	  APPLICATION level that exercises every enabled ML-KEM and ML-DSA
+	  parameter set with a deterministic seed and verifies a full
+	  keygen / encaps / decaps (KEM) or keygen / sign / verify (DSA)
+	  roundtrip before the application starts running. If any primitive
+	  fails its roundtrip, the module calls k_panic() so the system
+	  cannot proceed with cryptographic services that have not
+	  passed their power-on self-test.
+
+	  This is the embedded equivalent of a FIPS power-on self-test
+	  (POST). It uses the deterministic test RNG so the boot-time
+	  seed material is reproducible and does not pull entropy from
+	  the platform RNG before SYS_INIT completes; that is why the
+	  option depends on PQCP_RNG_DETERMINISTIC_TEST. After the
+	  self-verify completes, callers MUST re-seed via
+	  pqcp_rng_register() before serving production traffic.
+
+	  Off by default because it pulls in the deterministic RNG and
+	  changes boot semantics. Consumers that want a self-checking
+	  module turn this on explicitly.
+
+endmenu
+
+# =============================================================================
+# Benchmarking Configuration
+# =============================================================================
+menu "Benchmarking Configuration"
+
+config PQCP_BENCH
+	bool "Enable benchmarking support"
+	default n
+	select PQCP_TLS_SELFTEST
+	help
+	  Enable the PQCP benchmarking harness for measuring performance
+	  of cryptographic operations.
+
+if PQCP_BENCH
+
+config PQCP_BENCH_ITERATIONS
+	int "Number of benchmark iterations"
+	default 100
+	range 1 10000
+	help
+	  Number of iterations for each benchmark measurement.
+	  Higher values provide more accurate averages but take longer.
+
+config PQCP_BENCH_WARMUP
+	int "Number of warmup iterations"
+	default 10
+	range 0 100
+	help
+	  Number of warmup iterations before starting measurements.
+	  This helps stabilize caches and branch predictors.
+
+config PQCP_BENCH_DISTRIBUTION_SAMPLES
+	int "Number of retained benchmark samples for distribution metrics"
+	default 128
+	range 8 1024
+	help
+	  Number of per-operation timing samples retained for additive
+	  distribution metrics such as median, p90, p99, and median absolute
+	  deviation. The benchmark still runs CONFIG_PQCP_BENCH_ITERATIONS
+	  iterations; this setting only caps the RAM used to retain raw timing
+	  samples for publication-quality summaries.
+
+config PQCP_BENCH_STACK_ANALYSIS
+	bool "Stack usage analysis"
+	depends on THREAD_STACK_INFO
+	default y
+	help
+	  Enable stack usage analysis during benchmarks.
+	  Requires Zephyr stack monitoring support.
+
+config PQCP_BENCH_CYCLE_COUNTER
+	bool "Use cycle counter for timing"
+	default y if CPU_CORTEX_M_HAS_DWT
+	help
+	  Use hardware cycle counter for precise timing measurements.
+	  Falls back to k_cyc_to_us_floor32() if unavailable.
+
+config PQCP_BENCH_PROTOCOL
+	bool "Protocol-level benchmarks"
+	depends on NET_TCP || NET_UDP
+	default n
+	help
+	  Enable protocol-level benchmarks (TLS/DTLS handshakes).
+	  Requires networking support.
+
+config PQCP_BENCH_PROTOCOL_RTOS_METRICS
+	bool "RTOS-aware protocol benchmark metrics"
+	default n
+	help
+	  Add opt-in scheduler/interrupt context metrics to the offline protocol
+	  benchmark harness. When enabled, the benchmark spawns a lightweight
+	  background load thread and periodic timer so the emitted PQCP_METRIC
+	  stream can capture timer ISR counts, yield counts, and wake-up jitter
+	  while the PQC handshake runs.
+
+	  This option is intended for manual cost-of-assurance experiments and is
+	  kept disabled by default so existing CI and product-style builds keep
+	  their stable behavior.
+
+if PQCP_BENCH_PROTOCOL_RTOS_METRICS
+
+config PQCP_BENCH_PROTOCOL_RTOS_LOAD_PERIOD_MS
+	int "RTOS load period (ms)"
+	default 2
+	range 1 1000
+	help
+	  Period for the background benchmark load thread and timer ISR probe.
+	  Lower values increase the amount of RTOS scheduling pressure applied
+	  during each handshake measurement.
+
+config PQCP_BENCH_PROTOCOL_RTOS_LOAD_BUSY_WAIT_US
+	int "RTOS load busy-wait per wake-up (us)"
+	default 250
+	range 0 100000
+	help
+	  Busy-wait time performed by the background load thread after each wake-up.
+	  This keeps the RTOS-aware benchmark mode lightweight but observable on
+	  qemu_x86_64 and supported MCU boards during manual experiments.
+
+endif # PQCP_BENCH_PROTOCOL_RTOS_METRICS
+
+endif # PQCP_BENCH
+endmenu
+
+# =============================================================================
+# ACVP Support
+# =============================================================================
+menu "ACVP Support"
+
+config PQCP_ACVP
+	bool "Enable ACVP command library"
+	default y if PQCP_PROFILE_NATIVE_LAB
+	help
+	  Enable the ACVP command handler library for validation testing.
+	  This provides reusable command handlers for SEED, KEYGEN,
+	  ENCAPS, DECAPS, SIGN, VERIFY operations.
+
+if PQCP_ACVP
+
+config PQCP_ACVP_READLINE_TIMEOUT_MS
+	int "Serial ACVP frame timeout (ms)"
+	depends on PQCP_ACVP
+	default 2000
+	range 100 60000
+	help
+	  Timeout used by the serial ACVP sample once a host starts sending a
+	  command line. If the newline terminator does not arrive within this
+	  window, the sample drops the partial frame, emits ERROR:TIMEOUT, and
+	  waits for the next command.
+
+config PQCP_KAT_SMOKE_ONLY
+	bool "Limit ACVP KAT ztest to a smoke subset"
+	depends on PQCP_ACVP
+	default n
+	help
+	  Limit the ACVP known-answer ztest suite to a small deterministic subset
+	  for fast pull-request smoke runs. Leave this disabled for release gates
+	  so every vendored NIST KAT vector is exercised.
+
+endif # PQCP_ACVP
+
+endmenu
+
+# =============================================================================
+# Debug Configuration
+# =============================================================================
+menu "Debug Configuration"
+
+config PQCP_DEBUG_LOG
+	bool "Enable debug logging"
+	depends on LOG
+	default n
+	help
+	  Enable verbose debug logging for PQCP operations.
+
+config PQCP_ASSERT
+	bool "Enable runtime assertions"
+	default y if DEBUG
+	help
+	  Enable runtime assertion checks. Disable in production
+	  for slightly smaller code size.
+
+endmenu
+
+# =============================================================================
+# Extended Validation Support
+# =============================================================================
+menu "Extended Validation Support"
+
+config PQCP_FUZZ_TESTS
+	bool "Enable extended fuzz/stress-style validation tests"
+	default n
+	help
+	  Enable optional stress-oriented tests for the ACVP command parser
+	  and TLS self-test harness. These tests are intended for local runs
+	  and extended CI workflows and are disabled in the default smoke CI.
+
+config PQCP_CT_SAMPLE_TRANSCRIPT
+	bool "Emit raw constant-time smoke sample transcript markers"
+	default n
+	help
+	  Emit additive PQCP_CT_SAMPLE lines from the constant-time smoke ztest.
+	  This is intended for full local release evidence capture only. It does
+	  not change cryptographic behavior and does not claim formal constant-time
+	  verification.
+
+endmenu
+
+# =============================================================================
+# Build Profiles
+# =============================================================================
+menu "Build Profiles"
+
+config PQCP_PROFILE_MCU_MINIMAL
+	bool "MCU Minimal Profile"
+	select PQCP_MLKEM_LEVEL_768
+	select PQCP_MLDSA_LEVEL_65
+	help
+	  Minimal profile for constrained MCUs.
+	  Enables only ML-KEM-768 and ML-DSA-65 (NIST Level 3).
+	  Uses Zephyr entropy RNG. No lab/test features.
+	  Suitable for production firmware on Cortex-M devices.
+
+config PQCP_PROFILE_GATEWAY
+	bool "Gateway Profile"
+	select PQCP_MLKEM_LEVEL_512
+	select PQCP_MLKEM_LEVEL_768
+	select PQCP_MLKEM_LEVEL_1024
+	select PQCP_MLKEM_MULTI_LEVEL
+	select PQCP_MLDSA_LEVEL_44
+	select PQCP_MLDSA_LEVEL_65
+	select PQCP_MLDSA_LEVEL_87
+	select PQCP_MLDSA_MULTI_LEVEL
+	select PQCP_PSA_DRIVER
+	select PQCP_MLDSA_STREAMING
+	help
+	  Full-featured profile for gateways and more capable devices.
+	  Enables all ML-KEM and ML-DSA levels, PSA drivers, and
+	  streaming API. Suitable for devices with >256KB RAM.
+
+config PQCP_PROFILE_NATIVE_LAB
+	bool "Native/Lab Profile"
+	select PQCP_MLKEM_LEVEL_512
+	select PQCP_MLKEM_LEVEL_768
+	select PQCP_MLKEM_LEVEL_1024
+	select PQCP_MLKEM_MULTI_LEVEL
+	select PQCP_MLDSA_LEVEL_44
+	select PQCP_MLDSA_LEVEL_65
+	select PQCP_MLDSA_LEVEL_87
+	select PQCP_MLDSA_MULTI_LEVEL
+	select PQCP_MLDSA_STREAMING
+	select PQCP_BENCH
+	help
+	  Profile for development, testing, and benchmarking on
+	  native_sim, QEMU, or Linux hosts. Enables all algorithms,
+	  benchmarking support, and allows enabling deterministic
+	  RNG for KAT/ACVP testing.
+
+endmenu
+
+endif # PQCP

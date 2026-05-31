@@ -1,0 +1,36 @@
+tests:
+  pqcp.acvp_serial.garbage_rejected:
+    tags:
+      - pqcp
+      - acvp
+    harness: ztest
+    platform_allow:
+      - qemu_x86_64
+      - nucleo_h743zi
+    integration_platforms:
+      - qemu_x86_64
+    timeout: 120
+
+  pqcp.acvp_serial.recovery_after_garbage:
+    tags:
+      - pqcp
+      - acvp
+    harness: ztest
+    platform_allow:
+      - qemu_x86_64
+      - nucleo_h743zi
+    integration_platforms:
+      - qemu_x86_64
+    timeout: 120
+
+  pqcp.acvp_serial.oversize_frame_rejected:
+    tags:
+      - pqcp
+      - acvp
+    harness: ztest
+    platform_allow:
+      - qemu_x86_64
+      - nucleo_h743zi
+    integration_platforms:
+      - qemu_x86_64
+    timeout: 120

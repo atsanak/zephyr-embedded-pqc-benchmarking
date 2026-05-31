@@ -1,0 +1,18 @@
+{
+  "scenarios": [
+    {
+      "name": "default-l3-seed-a",
+      "kem_level": 768,
+      "sig_level": 65,
+      "seed_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+      "message_hex": "616376702d736d6f6b652d6d7367"
+    },
+    {
+      "name": "default-l3-seed-b",
+      "kem_level": 768,
+      "sig_level": 65,
+      "seed_hex": "f0e0d0c0b0a09080706050403020100000112233445566778899aabbccddeeff102132435465768798a9bacbdcedfe0f",
+      "message_hex": "616376702d7363656e6172696f2d32"
+    }
+  ]
+}

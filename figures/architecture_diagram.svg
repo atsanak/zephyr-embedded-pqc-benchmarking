@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">PQCP Zephyr architecture</title>
+  <desc id="desc">Architecture diagram showing Zephyr applications, PQCP module, native PQC backends, tests, metrics, and retained result artifacts.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .box { fill: #ffffff; stroke: #1f2937; stroke-width: 2; rx: 14; }
+      .accent { fill: #e0f2fe; stroke: #0369a1; stroke-width: 2; rx: 14; }
+      .result { fill: #ecfdf5; stroke: #047857; stroke-width: 2; rx: 14; }
+      .text { font-family: Inter, ui-sans-serif, system-ui, sans-serif; fill: #111827; font-size: 22px; font-weight: 700; }
+      .small { font-family: Inter, ui-sans-serif, system-ui, sans-serif; fill: #374151; font-size: 16px; font-weight: 500; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; fill: #374151; font-size: 15px; }
+      .arrow { stroke: #334155; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="640"/>
+  <text x="60" y="58" class="text" style="font-size:30px">Zephyr Embedded PQC Benchmarking</text>
+  <text x="60" y="88" class="small">Buildable Zephyr module, native PQC backends, validation tests, benchmark metrics, and retained CSV evidence.</text>
+
+  <rect x="60" y="140" width="260" height="110" class="box"/>
+  <text x="88" y="178" class="text">Samples + Tests</text>
+  <text x="88" y="207" class="small">KEM, signatures, ACVP, KAT,</text>
+  <text x="88" y="231" class="small">TLS smoke, CT smoke</text>
+
+  <rect x="440" y="120" width="320" height="150" class="accent"/>
+  <text x="478" y="160" class="text">PQCP Zephyr Module</text>
+  <text x="478" y="193" class="small">C wrappers, RNG abstraction,</text>
+  <text x="478" y="217" class="small">bench metrics, evidence markers,</text>
+  <text x="478" y="241" class="small">firmware scorecard</text>
+
+  <rect x="880" y="90" width="250" height="105" class="box"/>
+  <text x="912" y="128" class="text">mlkem-native</text>
+  <text x="912" y="158" class="small">ML-KEM-512/768/1024</text>
+
+  <rect x="880" y="225" width="250" height="105" class="box"/>
+  <text x="912" y="263" class="text">mldsa-native</text>
+  <text x="912" y="293" class="small">ML-DSA-44/65/87</text>
+
+  <rect x="60" y="390" width="260" height="125" class="box"/>
+  <text x="88" y="428" class="text">Zephyr Targets</text>
+  <text x="88" y="459" class="small">qemu_x86_64 runnable</text>
+  <text x="88" y="483" class="small">nucleo_h743zi build-only</text>
+
+  <rect x="440" y="380" width="320" height="145" class="accent"/>
+  <text x="478" y="418" class="text">Benchmark Tooling</text>
+  <text x="478" y="450" class="mono">PQCP_METRIC</text>
+  <text x="478" y="474" class="small">log parsing, CSV export,</text>
+  <text x="478" y="498" class="small">PQCP vs baseline comparison</text>
+
+  <rect x="880" y="390" width="250" height="125" class="result"/>
+  <text x="912" y="428" class="text">Final Results</text>
+  <text x="912" y="459" class="small">validated CSVs</text>
+  <text x="912" y="483" class="small">summary + SHA-256 manifest</text>
+
+  <path d="M320 195 C365 195, 390 195, 440 195" class="arrow"/>
+  <path d="M760 165 C805 150, 835 140, 880 140" class="arrow"/>
+  <path d="M760 220 C805 240, 835 270, 880 275" class="arrow"/>
+  <path d="M190 250 L190 390" class="arrow"/>
+  <path d="M320 452 C365 452, 390 452, 440 452" class="arrow"/>
+  <path d="M760 452 C805 452, 835 452, 880 452" class="arrow"/>
+  <path d="M600 270 L600 380" class="arrow"/>
+</svg>

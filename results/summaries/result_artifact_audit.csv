@@ -1,0 +1,12 @@
+artifact,decision,public_path,reason
+benchmark_results/release_check/benchmark_results.csv,included,results/final/validated_primitive_benchmarks_qemu.csv,Trusted release-check primitive benchmark export with paired PQCP/baseline rows and provenance sidecar.
+benchmark_results/release_check/benchmark_provenance.json,included_sanitized,results/final/benchmark_provenance.json,Hash/provenance for trusted primitive CSV; absolute matrix path sanitized.
+benchmark_results/extended/cost_of_assurance_smoke/cost_of_assurance_primitives.csv,included,results/final/validated_cost_of_assurance_primitives_qemu.csv,Compact final primitive cost-of-assurance comparison; complete QEMU smoke rows.
+benchmark_results/extended/cost_of_assurance_smoke/cost_of_assurance_protocols.csv,included,results/final/validated_cost_of_assurance_protocols_qemu.csv,Compact final protocol/TLS cost-of-assurance comparison; complete QEMU smoke rows.
+benchmark_results/extended/cost_of_assurance_smoke/cost_of_assurance_builds.csv,included,results/final/validated_cost_of_assurance_builds_qemu.csv,Build-size/resource companion for included QEMU smoke rows.
+benchmark_results/release_check/profile_validation/consolidated_metrics.csv,included_sanitized,results/final/validated_profile_resource_metrics.csv,Profile/target resource metrics retained after removing machine-specific log_path column.
+benchmark_results/release_check/mcu_protocol_footprint/cost_of_assurance_protocols_mcu.csv,included,results/final/validated_nucleo_protocol_footprint_build_only.csv,Small board build-only protocol footprint result for nucleo_h743zi; run logs are empty so it is clearly labeled build-only.
+results/benchmark_results.csv,excluded,,Older duplicate primitive benchmark export superseded by release_check CSV with provenance.
+benchmark_results/**/runs/*/*.log,excluded,,Verbose build/QEMU logs; many contain local paths and are too noisy for portfolio review.
+"benchmark_results/**/build/**, build*/**, output/release/**/api-docs",excluded,,Generated build products and generated docs; reproducible from source and not suitable for a clean public repo.
+"benchmark_results/**/compile_commands.json, rom.json, ram.json",excluded,,Generated build internals; resource metrics are summarized in sanitized CSVs.

@@ -1,0 +1,26 @@
+manifest:
+  self:
+    path: zephyr-embedded-pqc-benchmarking
+
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+    - name: pqcp
+      url-base: https://github.com/pq-code-package
+
+  defaults:
+    remote: zephyrproject-rtos
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: 684c9e8f32e4373a21098559f748f06915f950c9
+      import: true
+    - name: mlkem-native
+      remote: pqcp
+      revision: e07bff537f38b457601e524038f2395e235b011b
+      path: modules/crypto/mlkem-native
+    - name: mldsa-native
+      remote: pqcp
+      revision: 0f8b8e074b2525eb844b022b03b962bf888d51aa
+      path: modules/crypto/mldsa-native
