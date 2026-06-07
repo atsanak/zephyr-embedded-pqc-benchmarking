@@ -4,23 +4,7 @@ Zephyr RTOS module for benchmarking and validating embedded post-quantum cryptog
 
 This repository is a cleaned **public review version** of the workspace. It keeps the buildable implementation and verified result artifacts, while excluding generated build folders, temporary logs, virtual environments, old result duplicates, and planning notes.
 
-## What this repo proves
-
-- I can wire **native PQC backends** (`mlkem-native`, `mldsa-native`) into a Zephyr module with a clean C API, `west`/CMake build targets, and QEMU + real-board configs.
-- I can build **validation, not just benchmarks**: ACVP-style serial command flows, **KAT** known-answer fixtures, and timing-smoke (constant-time) regression markers.
-- I can express a **"cost-of-assurance"** methodology — paired PQCP-vs-baseline cycles/time/ROM/RAM — and make every result file hash-tracked in a manifest.
-
-## Public scope (read before judging the numbers)
-
-This is a **representative implementation** and **sanitized artifact**: source-visible for evaluation, not a certified module (see `LICENSE`). Public evidence is the QEMU primitive CSV plus build-only footprint rows; QEMU numbers are **regression/methodology evidence, not silicon performance**. The **ARM TrustZone-M / TF-M secure-world overhead figures (~2% avg, 5.5% worst)** quoted on my CV come from the **private** trusted-execution work and are **not** restated as public results here.
-
-## Reviewer guide — start here
-
-1. Open [`results/final/validated_primitive_benchmarks_qemu.csv`](results/final/validated_primitive_benchmarks_qemu.csv) and `results/summaries/results_summary.csv` — no build required.
-2. Skim the validation paths under `tests/` (ACVP serial, KAT, CT smoke, TLS selftest).
-3. Optional: `./scripts/build.sh tests/ztest_primitive qemu_x86_64 build-ztest-primitive` then `west build -d build-ztest-primitive -t run`.
-
-**CV → this repo:** supporting evidence for *"ARM TrustZone-M / TF-M trusted-execution layer"* and embedded PQC validation. The validation harness and cost-of-assurance method are public; the secure-world enclave measurements are private.
+This is a public, demo/review version of a larger project; it is source-visible for evaluation, not a certified module (see `LICENSE`). QEMU numbers here are regression/methodology evidence, not silicon performance, and the ARM TrustZone-M / TF-M secure-world measurements are private, so some public numbers differ from the full private work.
 
 ## Overview
 
