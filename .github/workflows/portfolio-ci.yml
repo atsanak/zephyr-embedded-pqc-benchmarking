@@ -40,7 +40,7 @@ jobs:
 
       - name: Reject accidentally tracked local material
         run: |
-          if git ls-files | grep -E '(^|/)(build[^/]*|\.venv|__pycache__|\.env)(/|$)|\.(pem|key)$'; then
+          if git ls-files | grep -E '(^|/)(build|build-[^/]*|\.venv|__pycache__)/|(^|/)\.env(\.[^/]*)?$|\.(pem|key)$'; then
             echo "local build, environment, or key material is tracked"
             exit 1
           fi
