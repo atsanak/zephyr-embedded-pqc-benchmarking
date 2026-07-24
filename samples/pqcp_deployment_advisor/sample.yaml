@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: LicenseRef-Proprietary-Collaborative-Evaluation
+
+sample:
+  name: PQCP allocation-free deployment advisor
+tests:
+  sample.pqcp.deployment_advisor:
+    tags:
+      - pqcp
+      - deployment
+      - evidence
+    platform_allow:
+      - qemu_x86_64
+      - native_sim
+    integration_platforms:
+      - qemu_x86_64

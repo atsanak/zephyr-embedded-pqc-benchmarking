@@ -122,6 +122,10 @@ if(CONFIG_PQCP_FIRMWARE_SCORECARD)
     zephyr_library_sources(${PQCP_SRC}/firmware_scorecard.c)
 endif()
 
+if(CONFIG_PQCP_DEPLOYMENT_ADVISOR)
+    zephyr_library_sources(${PQCP_SRC}/deployment_advisor.c)
+endif()
+
 if(CONFIG_PQCP_FIRMWARE_EVIDENCE)
     zephyr_library_sources(${PQCP_SRC}/firmware_evidence.c)
 endif()

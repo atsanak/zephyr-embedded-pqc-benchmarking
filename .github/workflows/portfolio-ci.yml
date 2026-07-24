@@ -1,0 +1,81 @@
+name: Public portfolio CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portfolio-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence:
+    name: Evidence and repository checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify retained result artifacts
+        run: python scripts/verify_public_artifacts.py
+
+      - name: Compile Python tooling
+        run: python -m compileall -q scripts
+
+      - name: Check shell tooling
+        run: |
+          bash -n scripts/build.sh
+          bash -n scripts/run_benchmark.sh
+
+      - name: Reject accidentally tracked local material
+        run: |
+          if git ls-files | grep -E '(^|/)(build[^/]*|\.venv|__pycache__|\.env)(/|$)|\.(pem|key)$'; then
+            echo "local build, environment, or key material is tracked"
+            exit 1
+          fi
+
+  advisor:
+    name: Allocation-free C advisor
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build host regression harness
+        run: |
+          cc -std=c11 -O2 -Wall -Wextra -Werror \
+            -Iinclude \
+            -Itests/host_deployment_advisor/shim \
+            src/deployment_advisor.c \
+            tests/host_deployment_advisor/main.c \
+            -o /tmp/pqcp-deployment-advisor-test
+
+      - name: Run deterministic advisor checks
+        run: /tmp/pqcp-deployment-advisor-test
+
+  fleet-coordinator:
+    name: Rust fleet coordinator
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/pqcp_fleet_coordinator
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Show Rust toolchain
+        run: rustc --version && cargo --version
+
+      - name: Test locked dependency graph
+        run: cargo test --locked --all-targets

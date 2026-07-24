@@ -20,7 +20,11 @@ zephyr/*
 !zephyr/module.yml
 modules/
 bootloader/
-tools/
+tools/*/
+!tools/pqcp_fleet_coordinator/
+!tools/tcg_ct_plugin/
+tools/pqcp_fleet_coordinator/target/
+tools/tcg_ct_plugin/libpqcp_ct_insn.*
 
 # Python/local tooling
 .venv/

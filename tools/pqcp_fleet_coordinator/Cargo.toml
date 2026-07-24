@@ -1,0 +1,35 @@
+[package]
+name = "pqcp-fleet-coordinator"
+version = "0.1.0"
+edition = "2021"
+license = "LicenseRef-Proprietary-Collaborative-Evaluation"
+description = "Operational control plane for PQCP Zephyr trust-fabric fleets"
+
+[dependencies]
+anyhow = "1.0"
+argon2 = "0.5"
+async-stream = "0.3"
+axum = { version = "0.8", features = ["json", "macros"] }
+base64 = "0.22"
+clap = { version = "4.5", features = ["derive", "env"] }
+ciborium = "0.2"
+chacha20poly1305 = "0.10"
+futures-core = "0.3"
+getrandom = "0.3"
+hex = "0.4"
+pqcrypto-mldsa = "0.1"
+pqcrypto-traits = "0.3"
+rusqlite = { version = "0.32", features = ["bundled"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+thiserror = "2.0"
+tokio = { version = "1.43", features = ["macros", "rt-multi-thread", "net", "signal", "sync", "time"] }
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1.12", features = ["v4", "serde"] }
+zeroize = "1.8"
+
+[dev-dependencies]
+tempfile = "3.15"

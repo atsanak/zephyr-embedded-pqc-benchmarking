@@ -24,7 +24,7 @@
     "primitive_row_count": 36,
     "protocol_row_count": 0,
     "row_count": 36,
-    "sha256": "8cda3b4a68c57a364537818ee55415a322e621da2cc308356c871cb0000cf171"
+    "sha256": "43e3a59fbf42f67f2e69872b636f9cb614f43296dcfb35129bd8ee3e7451b19f"
   },
   "generated_at": "2026-04-27T10:55:25.481412+00:00",
   "generator": "scripts/export_results.py",

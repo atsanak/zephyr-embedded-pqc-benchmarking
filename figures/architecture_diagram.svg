@@ -1,65 +1,106 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
-  <title id="title">PQCP Zephyr architecture</title>
-  <desc id="desc">Architecture diagram showing Zephyr applications, PQCP module, native PQC backends, tests, metrics, and retained result artifacts.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">Zephyr embedded PQC public engineering architecture</title>
+  <desc id="desc">Architecture diagram showing the Zephyr device plane, reproducible evidence pipeline, and Rust fleet control plane.</desc>
   <defs>
     <style>
       .bg { fill: #f8fafc; }
-      .box { fill: #ffffff; stroke: #1f2937; stroke-width: 2; rx: 14; }
-      .accent { fill: #e0f2fe; stroke: #0369a1; stroke-width: 2; rx: 14; }
-      .result { fill: #ecfdf5; stroke: #047857; stroke-width: 2; rx: 14; }
-      .text { font-family: Inter, ui-sans-serif, system-ui, sans-serif; fill: #111827; font-size: 22px; font-weight: 700; }
-      .small { font-family: Inter, ui-sans-serif, system-ui, sans-serif; fill: #374151; font-size: 16px; font-weight: 500; }
-      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; fill: #374151; font-size: 15px; }
-      .arrow { stroke: #334155; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .plane-device { fill: #eff6ff; stroke: #2563eb; stroke-width: 2; rx: 18; }
+      .plane-evidence { fill: #ecfdf5; stroke: #059669; stroke-width: 2; rx: 18; }
+      .plane-fleet { fill: #faf5ff; stroke: #9333ea; stroke-width: 2; rx: 18; }
+      .box { fill: #ffffff; stroke: #334155; stroke-width: 2; rx: 12; }
+      .box-device { fill: #dbeafe; stroke: #1d4ed8; stroke-width: 2; rx: 12; }
+      .box-evidence { fill: #d1fae5; stroke: #047857; stroke-width: 2; rx: 12; }
+      .box-fleet { fill: #f3e8ff; stroke: #7e22ce; stroke-width: 2; rx: 12; }
+      .title { font-family: Inter, ui-sans-serif, system-ui, sans-serif; fill: #0f172a; font-size: 31px; font-weight: 750; }
+      .plane-title { font-family: Inter, ui-sans-serif, system-ui, sans-serif; fill: #0f172a; font-size: 20px; font-weight: 750; }
+      .label { font-family: Inter, ui-sans-serif, system-ui, sans-serif; fill: #111827; font-size: 17px; font-weight: 700; }
+      .small { font-family: Inter, ui-sans-serif, system-ui, sans-serif; fill: #475569; font-size: 13px; font-weight: 500; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; fill: #334155; font-size: 12px; }
+      .arrow { stroke: #475569; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .arrow-both { stroke: #475569; stroke-width: 2.5; fill: none; marker-start: url(#arrow-start); marker-end: url(#arrow); }
     </style>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+      <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-start" markerWidth="10" markerHeight="10" refX="1" refY="3" orient="auto-start-reverse" markerUnits="strokeWidth">
+      <path d="M9,0 L9,6 L0,3 z" fill="#475569"/>
     </marker>
   </defs>
-  <rect class="bg" width="1200" height="640"/>
-  <text x="60" y="58" class="text" style="font-size:30px">Zephyr Embedded PQC Benchmarking</text>
-  <text x="60" y="88" class="small">Buildable Zephyr module, native PQC backends, validation tests, benchmark metrics, and retained CSV evidence.</text>
 
-  <rect x="60" y="140" width="260" height="110" class="box"/>
-  <text x="88" y="178" class="text">Samples + Tests</text>
-  <text x="88" y="207" class="small">KEM, signatures, ACVP, KAT,</text>
-  <text x="88" y="231" class="small">TLS smoke, CT smoke</text>
+  <rect class="bg" width="1400" height="760"/>
+  <text x="50" y="50" class="title">Zephyr Embedded PQC Engineering Portfolio</text>
+  <text x="50" y="78" class="small" style="font-size:15px">Inspectable device code, reproducible evidence, deployment decisions, and fleet operations.</text>
 
-  <rect x="440" y="120" width="320" height="150" class="accent"/>
-  <text x="478" y="160" class="text">PQCP Zephyr Module</text>
-  <text x="478" y="193" class="small">C wrappers, RNG abstraction,</text>
-  <text x="478" y="217" class="small">bench metrics, evidence markers,</text>
-  <text x="478" y="241" class="small">firmware scorecard</text>
+  <rect x="50" y="110" width="820" height="280" class="plane-device"/>
+  <text x="75" y="143" class="plane-title">Zephyr device / QEMU plane</text>
 
-  <rect x="880" y="90" width="250" height="105" class="box"/>
-  <text x="912" y="128" class="text">mlkem-native</text>
-  <text x="912" y="158" class="small">ML-KEM-512/768/1024</text>
+  <rect x="90" y="185" width="205" height="90" class="box"/>
+  <text x="112" y="220" class="label">Samples + ztests</text>
+  <text x="112" y="247" class="small">ACVP, KAT, TLS, CT</text>
 
-  <rect x="880" y="225" width="250" height="105" class="box"/>
-  <text x="912" y="263" class="text">mldsa-native</text>
-  <text x="912" y="293" class="small">ML-DSA-44/65/87</text>
+  <rect x="350" y="170" width="240" height="115" class="box-device"/>
+  <text x="377" y="207" class="label">PQCP Zephyr module</text>
+  <text x="377" y="234" class="small">C APIs, RNG, PSA shims</text>
+  <text x="377" y="257" class="mono">PQCP_METRIC + evidence</text>
 
-  <rect x="60" y="390" width="260" height="125" class="box"/>
-  <text x="88" y="428" class="text">Zephyr Targets</text>
-  <text x="88" y="459" class="small">qemu_x86_64 runnable</text>
-  <text x="88" y="483" class="small">nucleo_h743zi build-only</text>
+  <rect x="650" y="185" width="175" height="90" class="box"/>
+  <text x="673" y="220" class="label">Native PQC</text>
+  <text x="673" y="247" class="small">ML-KEM + ML-DSA</text>
 
-  <rect x="440" y="380" width="320" height="145" class="accent"/>
-  <text x="478" y="418" class="text">Benchmark Tooling</text>
-  <text x="478" y="450" class="mono">PQCP_METRIC</text>
-  <text x="478" y="474" class="small">log parsing, CSV export,</text>
-  <text x="478" y="498" class="small">PQCP vs baseline comparison</text>
+  <rect x="350" y="310" width="240" height="62" class="box-device"/>
+  <text x="377" y="338" class="label">Deployment advisor</text>
+  <text x="377" y="359" class="small">bounded, deterministic, allocation-free</text>
 
-  <rect x="880" y="390" width="250" height="125" class="result"/>
-  <text x="912" y="428" class="text">Final Results</text>
-  <text x="912" y="459" class="small">validated CSVs</text>
-  <text x="912" y="483" class="small">summary + SHA-256 manifest</text>
+  <path d="M295 230 L350 230" class="arrow"/>
+  <path d="M590 230 L650 230" class="arrow"/>
+  <path d="M470 285 L470 310" class="arrow"/>
 
-  <path d="M320 195 C365 195, 390 195, 440 195" class="arrow"/>
-  <path d="M760 165 C805 150, 835 140, 880 140" class="arrow"/>
-  <path d="M760 220 C805 240, 835 270, 880 275" class="arrow"/>
-  <path d="M190 250 L190 390" class="arrow"/>
-  <path d="M320 452 C365 452, 390 452, 440 452" class="arrow"/>
-  <path d="M760 452 C805 452, 835 452, 880 452" class="arrow"/>
-  <path d="M600 270 L600 380" class="arrow"/>
+  <rect x="50" y="425" width="820" height="280" class="plane-evidence"/>
+  <text x="75" y="458" class="plane-title">Reproducible evidence pipeline</text>
+
+  <rect x="90" y="500" width="205" height="95" class="box-evidence"/>
+  <text x="112" y="535" class="label">QEMU TCG plugin</text>
+  <text x="112" y="561" class="small">instructions, loads, stores</text>
+
+  <rect x="350" y="490" width="240" height="115" class="box-evidence"/>
+  <text x="377" y="527" class="label">Build + run tooling</text>
+  <text x="377" y="554" class="small">capture, parse, compare</text>
+  <text x="377" y="578" class="mono">stable serial markers</text>
+
+  <rect x="650" y="480" width="175" height="82" class="box"/>
+  <text x="673" y="514" class="label">Paired CSV</text>
+  <text x="673" y="539" class="small">PQCP vs baseline</text>
+
+  <rect x="650" y="605" width="175" height="72" class="box"/>
+  <text x="673" y="636" class="label">Provenance</text>
+  <text x="673" y="659" class="small">hash + byte manifest</text>
+
+  <path d="M295 547 L350 547" class="arrow"/>
+  <path d="M590 547 L650 521" class="arrow"/>
+  <path d="M737 562 L737 605" class="arrow"/>
+  <path d="M470 390 L470 490" class="arrow"/>
+
+  <rect x="930" y="110" width="420" height="595" class="plane-fleet"/>
+  <text x="955" y="143" class="plane-title">Offline-first fleet control plane</text>
+
+  <rect x="985" y="185" width="310" height="95" class="box-fleet"/>
+  <text x="1012" y="221" class="label">Rust coordinator</text>
+  <text x="1012" y="247" class="small">one service for offline + connected flows</text>
+
+  <rect x="985" y="330" width="310" height="82" class="box"/>
+  <text x="1012" y="364" class="label">SQLite / WAL state</text>
+  <text x="1012" y="389" class="small">inventory, counters, rollout history</text>
+
+  <rect x="985" y="462" width="310" height="92" class="box"/>
+  <text x="1012" y="496" class="label">Canonical CBOR artifacts</text>
+  <text x="1012" y="522" class="small">ML-DSA vouchers, policy, revocation</text>
+
+  <rect x="985" y="604" width="310" height="70" class="box"/>
+  <text x="1012" y="635" class="label">CLI + REST + SSE</text>
+  <text x="1012" y="658" class="small">operator and automation interfaces</text>
+
+  <path d="M1140 280 L1140 330" class="arrow-both"/>
+  <path d="M1140 412 L1140 462" class="arrow-both"/>
+  <path d="M1140 554 L1140 604" class="arrow-both"/>
+  <path d="M870 245 C915 245, 930 360, 985 500" class="arrow-both"/>
 </svg>

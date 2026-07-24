@@ -1,64 +1,171 @@
-# Zephyr Embedded PQC Benchmarking
+# Zephyr Embedded PQC Engineering Portfolio
 
-Zephyr RTOS module for benchmarking and validating embedded post-quantum cryptography. It integrates ML-KEM through `mlkem-native`, ML-DSA through `mldsa-native`, QEMU/board build targets, ACVP/KAT validation tests, timing-smoke checks, resource measurement, and reproducible CSV result exports.
+[![Public portfolio CI](https://github.com/atsanak/zephyr-embedded-pqc-benchmarking/actions/workflows/portfolio-ci.yml/badge.svg)](https://github.com/atsanak/zephyr-embedded-pqc-benchmarking/actions/workflows/portfolio-ci.yml)
 
-This repository is a cleaned **public review version** of the workspace. It keeps the buildable implementation and verified result artifacts, while excluding generated build folders, temporary logs, virtual environments, old result duplicates, and planning notes.
+A buildable public review cut of a larger Zephyr post-quantum trust stack:
+embedded C APIs for ML-KEM and ML-DSA, ACVP/KAT validation, reproducible
+benchmark evidence, an allocation-free deployment decision engine, a QEMU
+instruction/memory-access plugin, and an offline-first Rust fleet coordinator.
 
-This is a public, demo/review version of a larger project; it is source-visible for evaluation, not a certified module (see `LICENSE`). QEMU numbers here are regression/methodology evidence, not silicon performance, and the ARM TrustZone-M / TF-M secure-world measurements are private, so some public numbers differ from the full private work.
+This is not a collection of screenshots or architecture claims. The highlighted
+subsystems include source, tests, fixtures, and CI entry points that can be
+reviewed independently.
 
-## Overview
+> This repository is source-visible for engineering evaluation under
+> [`LICENSE`](LICENSE). It is not a certified cryptographic module. QEMU
+> measurements are regression/methodology evidence, build-only results are
+> labelled as such, and unpublished secure-world measurements from the larger
+> project are intentionally excluded.
 
-The project answers a practical embedded-security question: what does it cost to run PQC primitives and PQC-flavored protocol paths inside Zephyr, and how can the result be checked by another reviewer?
+## Start here
 
-The module provides:
+| If you have… | Review this |
+|---|---|
+| 2 minutes | The [architecture](docs/ARCHITECTURE.md) and the capability map below |
+| 5 minutes | The [technical reviewer route](docs/REVIEWER_GUIDE.md) |
+| 10 minutes | The [deployment advisor](src/deployment_advisor.c), its [host regression harness](tests/host_deployment_advisor/main.c), and the [Zephyr ztest](tests/ztest_deployment_advisor/src/main.c) |
+| 15 minutes | The [Rust fleet coordinator](tools/pqcp_fleet_coordinator) and its deterministic rollout state machine |
+| A Zephyr workspace | Build the samples/tests and replay the retained benchmark workflow |
 
-- ML-KEM wrappers and samples for key generation, encapsulation, and decapsulation.
-- ML-DSA wrappers and samples for key generation, signing, verification, and streaming-message signing.
-- ACVP-style serial command parsing for validation-oriented keygen/encap/decap/sign/verify flows.
-- KAT tests using checked-in known-answer fixtures for ML-KEM and ML-DSA.
-- Benchmark output through stable `PQCP_METRIC` rows.
-- Evidence markers for build manifest, provider contract, firmware policy, capability descriptor, firmware scorecard, assurance status, and replayable transcript checks.
-- Result analysis scripts that export paired PQCP-vs-baseline CSV summaries.
+## Capability map
+
+| Layer | What is implemented | Inspectable proof |
+|---|---|---|
+| PQC primitives | ML-KEM-512/768/1024 and ML-DSA-44/65/87 through `mlkem-native` and `mldsa-native` | C wrappers in [`src`](src), native dependency pins in [`west.yml`](west.yml) |
+| Embedded integration | Out-of-tree Zephyr module, Kconfig gates, RNG abstraction, PSA shims, QEMU and MCU configs | [`CMakeLists.txt`](CMakeLists.txt), [`Kconfig`](Kconfig), [`samples`](samples) |
+| Validation | KAT fixtures, ACVP-style serial commands, malformed-input/timeout paths, boot self-test, TLS and timing smoke tests | [`tests`](tests) |
+| Reproducible evidence | Stable `PQCP_METRIC` rows, paired comparison, CSV export, provenance sidecar, SHA-256 manifest | [`scripts`](scripts), [`results/final`](results/final), [`verify_public_artifacts.py`](scripts/verify_public_artifacts.py) |
+| Deployment intelligence | Deterministic, allocation-free feasibility/ranking engine with blocker masks, evidence gaps, and next-experiment plans | [`deployment_advisor.h`](include/pqcp_zephyr/deployment_advisor.h), [`pqcp_deployment_advisor`](samples/pqcp_deployment_advisor) |
+| CT regression instrumentation | QEMU TCG plugin counts instructions, loads, and stores in ELF-resolved firmware regions | [`tcg_ct_plugin`](tools/tcg_ct_plugin), [`ztest_ct_instr`](tests/ztest_ct_instr), [`run_ct_instruction_checks.py`](scripts/run_ct_instruction_checks.py) |
+| Fleet operations | SQLite/WAL state, encrypted ML-DSA root, canonical CBOR artifacts, deterministic canaries, CLI, REST, and SSE | [`pqcp_fleet_coordinator`](tools/pqcp_fleet_coordinator) |
 
 ## Architecture
 
-![Architecture diagram](figures/architecture_diagram.svg)
+![PQCP public engineering architecture](figures/architecture_diagram.svg)
 
-At runtime, samples and tests call the PQCP Zephyr module, which wraps the native PQ Code Package implementations. Benchmark and validation samples emit serial markers. Python tooling builds Zephyr targets with `west`, captures QEMU or board output, parses `PQCP_METRIC` rows, and writes compact CSV artifacts.
+The boundaries are deliberate:
 
-## Supported Algorithms And Targets
+- the cryptographic provider packages implement algorithms;
+- the Zephyr module owns embedded APIs, configuration, and stable markers;
+- measurement tooling turns device output into provenance-bound evidence;
+- the deployment advisor consumes evidence facts without executing crypto;
+- the host control plane manages fleet state and signed artifacts.
 
-Algorithms:
+The detailed data flow and failure semantics are in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-- ML-KEM-512, ML-KEM-768, ML-KEM-1024 via `mlkem-native`.
-- ML-DSA-44, ML-DSA-65, ML-DSA-87 via `mldsa-native`.
+## Selected trust-stack additions
 
-Validation paths:
+### Allocation-free on-device deployment advisor
 
-- `tests/ztest_primitive`: primitive API checks.
-- `tests/ztest_acvp_serial`: ACVP-style serial command checks.
-- `tests/ztest_acvp_kat`: known-answer fixture checks.
-- `tests/ztest_ct_smoke`: timing-smoke regression markers for ML-KEM decapsulation.
-- `tests/ztest_tls_selftest`: TLS/protocol metric smoke output.
+The advisor evaluates measured candidates against security, latency, RAM,
+stack, heap, flash, energy, provider, and evidence constraints. It preserves
+rejected candidates, distinguishes a hard blocker from missing evidence, ranks
+only feasible choices, and emits a prioritized experiment plan.
 
-Targets represented in the included results:
+Properties visible in the code:
 
-- `qemu_x86_64`: runnable QEMU benchmark and validation target.
-- `nucleo_h743zi`: build-only protocol footprint result.
-- `mps2/an385`: build/resource profile coverage result.
+- caller-owned fixed-capacity storage; no heap allocation;
+- deterministic tie-breaking and stable transcript tokens;
+- explicit input validation and bounded candidate/gap counts;
+- separate `ACCEPTED`, `CONDITIONAL`, and `REJECTED` states;
+- replay test proving the same inputs produce the same ranking;
+- host-fast checks plus a full Zephyr ztest suite.
 
-QEMU numbers are regression and methodology evidence, not physical board performance claims.
+Run the toolchain-light check:
 
-## Requirements
+```bash
+cc -std=c11 -O2 -Wall -Wextra -Werror \
+  -Iinclude -Itests/host_deployment_advisor/shim \
+  src/deployment_advisor.c tests/host_deployment_advisor/main.c \
+  -o /tmp/pqcp-advisor-test
+/tmp/pqcp-advisor-test
+```
 
-- Python 3.12 or newer.
-- Zephyr `west`.
-- Zephyr SDK 1.0.1.
-- Zephyr revision from `west.yml`.
-- `git`.
-- `qemu-system-x86_64` for QEMU runs.
+Build the Zephyr demonstration:
 
-Initialize dependencies either with west or submodules:
+```bash
+west build -p always -b qemu_x86_64 \
+  samples/pqcp_deployment_advisor \
+  -d build-deployment-advisor
+west build -d build-deployment-advisor -t run
+```
+
+### Offline-first Rust fleet coordinator
+
+`pqcp-fleet` is the host-side control plane for a larger device trust protocol.
+It stores inventory and rollout state in SQLite/WAL, verifies enrollment,
+issues firmware-compatible ML-DSA artifacts, publishes policy/revocation
+epochs, and evaluates deterministic canary rollouts.
+
+The local signing root is encrypted with Argon2id and XChaCha20-Poly1305. The
+file provider is explicitly a development/evaluation provider; the API boundary
+allows replacement with an HSM, secure element, PKCS#11 provider, or managed
+signer.
+
+```bash
+cargo test --locked --all-targets \
+  --manifest-path tools/pqcp_fleet_coordinator/Cargo.toml
+```
+
+The public cut contains the independently reviewable coordinator. The complete
+firmware fleet plane from the larger private project is not represented as a
+public production deployment.
+
+### QEMU instruction and memory-access evidence
+
+The TCG plugin hooks begin/end marker addresses resolved from the exact
+firmware ELF and records guest instruction, load, and store counts for every
+measured region. The paired Zephyr test exercises valid and corrupted ML-KEM
+decapsulation paths; the runner rejects divergent profiles.
+
+This is stronger regression evidence than wall-clock timing alone. It is still
+not a formal constant-time proof: memory addresses and microarchitectural
+effects remain out of scope.
+
+```bash
+python3 scripts/run_ct_instruction_checks.py --help
+```
+
+## Retained benchmark evidence
+
+The public result set contains 18 paired primitive summaries spanning all six
+parameter sets. A few representative rows are shown below; negative comparison
+values mean fewer cycles than the retained baseline in this specific QEMU run.
+
+| Operation | PQCP cycles | Baseline cycles | Comparison |
+|---|---:|---:|---:|
+| ML-KEM-768 decapsulation | 83,700 | 165,700 | -49.49% |
+| ML-DSA-65 verification | 160,100 | 180,900 | -11.50% |
+| ML-DSA-44 signing | 349,000 | 703,700 | -50.41% |
+
+Review the complete data rather than extrapolating from these examples:
+
+- [`validated_primitive_benchmarks_qemu.csv`](results/final/validated_primitive_benchmarks_qemu.csv):
+  paired source rows;
+- [`results_summary.csv`](results/summaries/results_summary.csv): compact
+  review table;
+- [`benchmark_provenance.json`](results/final/benchmark_provenance.json):
+  generator, source hash, environment, and row coverage;
+- [`included_results_manifest.csv`](results/summaries/included_results_manifest.csv):
+  SHA-256 and byte count for every retained artifact.
+
+Verify the public evidence without installing Zephyr:
+
+```bash
+python3 scripts/verify_public_artifacts.py
+```
+
+## Build and run the original benchmark paths
+
+Requirements:
+
+- Python 3.12 or newer;
+- `west`, Git, and a compatible Zephyr SDK;
+- `qemu-system-x86_64` for QEMU runs;
+- Rust only for the fleet coordinator.
+
+Initialize the Zephyr workspace:
 
 ```bash
 west init -l .
@@ -66,82 +173,68 @@ west update
 west zephyr-export
 ```
 
-For standalone module development, the native backend submodules can also be initialized:
+The native backends may also be initialized as submodules for standalone module
+development:
 
 ```bash
 git submodule update --init --recursive
 ```
 
-## Build
-
-Build a primitive validation target:
+Build and run a primitive validation target:
 
 ```bash
 ./scripts/build.sh tests/ztest_primitive qemu_x86_64 build-ztest-primitive
-```
-
-Equivalent raw west command:
-
-```bash
-west build -p always -b qemu_x86_64 tests/ztest_primitive -d build-ztest-primitive
-```
-
-## Run
-
-Run the built QEMU target:
-
-```bash
 west build -d build-ztest-primitive -t run
 ```
 
-Run a compact benchmark export into `results/local/`:
+Export and analyze a compact local benchmark:
 
 ```bash
 ./scripts/run_benchmark.sh
+python3 scripts/analyze_results.py \
+  results/final/validated_primitive_benchmarks_qemu.csv
 ```
 
-Analyze the trusted final primitive benchmark CSV:
+## Validation matrix
 
-```bash
-python3 scripts/analyze_results.py results/final/validated_primitive_benchmarks_qemu.csv
-```
+- `tests/ztest_primitive`: ML-KEM/ML-DSA public API behavior.
+- `tests/ztest_acvp_serial`: ACVP-style serial commands.
+- `tests/ztest_acvp_serial_negative`: malformed frames and recovery paths.
+- `tests/ztest_acvp_kat`: checked-in known-answer fixtures.
+- `tests/ztest_kat_boot_verify`: boot-time power-on self-test.
+- `tests/ztest_ct_smoke`: timing-smoke regression markers.
+- `tests/ztest_ct_instr`: instruction and memory-access regions for the QEMU
+  plugin.
+- `tests/ztest_tls_selftest`: protocol metric smoke output.
+- `tests/ztest_deployment_advisor`: feasibility, ranking, blockers, gaps,
+  invalid inputs, determinism, and marker validation.
 
-## Results Summary
-
-Trusted final primitive benchmark source:
+## Repository map
 
 ```text
-results/final/validated_primitive_benchmarks_qemu.csv
+include/pqcp_zephyr/       Public C APIs
+src/                       Zephyr module implementation
+samples/                   Runnable firmware demonstrations
+tests/                     Zephyr and host regression suites
+scripts/                   Build, benchmark, parse, and verification tooling
+results/final/             Curated provenance-bound result artifacts
+tools/tcg_ct_plugin/       QEMU guest execution instrumentation
+tools/pqcp_fleet_coordinator/
+                           Rust fleet control plane
+docs/                      Architecture and technical review route
 ```
 
-Summary table:
+## Scope and limitations
 
-```text
-results/summaries/results_summary.csv
-```
+- QEMU cycle counts support regression and methodology review, not physical
+  board performance claims.
+- `nucleo_h743zi` rows in the retained set are build-only footprint evidence.
+- Energy is absent where no retained physical measurement exists.
+- Timing-smoke and instruction/access-count equality are not formal
+  constant-time proofs.
+- The fleet key-file provider is for local evaluation, not production custody.
+- The repository is a curated public slice, not the complete private trust
+  stack and not a certification claim.
 
-Included result artifacts:
-
-- `results/final/validated_primitive_benchmarks_qemu.csv`: paired PQCP vs baseline primitive cycles, time, ROM, RAM on `qemu_x86_64`.
-- `results/final/benchmark_provenance.json`: hash and generation metadata for the trusted primitive CSV.
-- `results/final/validated_cost_of_assurance_primitives_qemu.csv`: compact primitive cost-of-assurance rows.
-- `results/final/validated_cost_of_assurance_protocols_qemu.csv`: compact TLS/protocol cost-of-assurance rows.
-- `results/final/validated_cost_of_assurance_builds_qemu.csv`: build-size companion rows for QEMU cost-of-assurance runs.
-- `results/final/validated_profile_resource_metrics.csv`: sanitized cross-profile resource metrics with local paths removed.
-- `results/final/validated_nucleo_protocol_footprint_build_only.csv`: build-only protocol footprint rows for `nucleo_h743zi`.
-- `results/summaries/included_results_manifest.csv`: SHA-256 hashes for included public result files.
-- `results/summaries/result_artifact_audit.csv`: concise include/exclude audit for CSV/result sources.
-
-## Reproducibility Notes
-
-- The benchmark tooling captures `PQCP_METRIC` serial rows and converts them to CSV using `scripts/parse_logs.py` and `scripts/export_results.py`.
-- The final primitive CSV was selected from release-check output because it has paired PQCP/baseline rows and a provenance sidecar.
-- Build directories, raw logs, generated Doxygen HTML, local virtual environments, and duplicate CSVs are intentionally excluded.
-- QEMU measurements are useful for regression and comparison methodology. Physical performance claims require board-run evidence.
-
-## Limitations
-
-- Included `nucleo_h743zi` rows are build-only footprint measurements, not UART runtime benchmark measurements.
-- Energy is not included because it was not measured in the retained final artifacts.
-- Timing-smoke and CT markers are regression evidence only; they are not formal constant-time proofs.
-- This repository is source-visible for portfolio and evaluation use, but it is not open source. See `LICENSE`.
+See [`SECURITY.md`](SECURITY.md) for responsible reporting and assurance
+boundaries.

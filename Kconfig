@@ -709,6 +709,29 @@ endif # PQCP_ACVP
 endmenu
 
 # =============================================================================
+# On-Device Deployment Advisor
+# =============================================================================
+menu "On-Device PQC Deployment Advisor"
+
+config PQCP_DEPLOYMENT_ADVISOR
+	bool "Enable allocation-free PQC deployment advisor"
+	default n
+	help
+	  Enable a deterministic C decision-support engine that evaluates
+	  caller-supplied benchmark and evidence facts against a constrained
+	  deployment scenario. It preserves rejected candidates with explicit
+	  blocker masks, separates hard feasibility from evidence maturity,
+	  ranks accepted and conditional candidates, and produces a prioritized
+	  next-experiment plan.
+
+	  The advisor does not select providers, execute cryptographic operations,
+	  or claim certification. It is intended for device-side policy demos,
+	  QEMU experiments, and review flows where recommendation logic must be
+	  replayable without dynamic allocation.
+
+endmenu
+
+# =============================================================================
 # Debug Configuration
 # =============================================================================
 menu "Debug Configuration"

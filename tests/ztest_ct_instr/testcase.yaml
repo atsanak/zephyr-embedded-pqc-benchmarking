@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: LicenseRef-Proprietary-Collaborative-Evaluation
+
+tests:
+  pqcp.ct_instruction_regions:
+    tags:
+      - pqcp
+      - crypto
+      - constant_time
+    platform_allow:
+      - qemu_x86_64
+    integration_platforms:
+      - qemu_x86_64
