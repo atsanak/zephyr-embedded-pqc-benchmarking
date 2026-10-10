@@ -185,7 +185,7 @@ static int boundary_checks(void)
 	return 0;
 }
 
-int main(void)
+static int run_checks(void)
 {
 	if (campaign_checks() != 0 || boundary_checks() != 0) {
 		return 1;
@@ -193,3 +193,19 @@ int main(void)
 	puts("synthetic campaign/advisor integration and boundary checks: PASS");
 	return 0;
 }
+
+#ifdef CONFIG_ZTEST
+#include <zephyr/ztest.h>
+
+ZTEST(deployment_campaign, test_campaign_to_advisor_and_boundaries)
+{
+	zassert_ok(run_checks(), "campaign regression checks failed");
+}
+
+ZTEST_SUITE(deployment_campaign, NULL, NULL, NULL, NULL, NULL);
+#else
+int main(void)
+{
+	return run_checks();
+}
+#endif

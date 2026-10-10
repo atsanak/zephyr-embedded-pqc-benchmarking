@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-Proprietary-Collaborative-Evaluation
+tests:
+  pqcp.deployment_campaign:
+    tags: [pqcp, deployment, evidence]
+    platform_allow: [qemu_x86_64, native_sim]
+    integration_platforms: [qemu_x86_64]
+    timeout: 60

@@ -33,6 +33,9 @@ jobs:
       - name: Compile Python tooling
         run: python -m compileall -q scripts
 
+      - name: Test west runner failure and timeout handling
+        run: python scripts/test_check_zephyr.py
+
       - name: Check shell tooling
         run: |
           bash -n scripts/build.sh
@@ -58,6 +61,47 @@ jobs:
 
       - name: Run address and undefined-behavior sanitizers
         run: SANITIZE=1 bash scripts/check_host_c.sh
+
+  zephyr:
+    name: Zephyr QEMU firmware smoke
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository and pinned native backends
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build prerequisites and west
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build device-tree-compiler gperf gcc g++ xz-utils wget libsdl2-dev
+          python -m pip install west==1.5.0
+
+      - name: Initialize the published manifest and SDK
+        timeout-minutes: 15
+        run: |
+          west init -l "$GITHUB_WORKSPACE"
+          west update --narrow zephyr
+          west update --narrow mlkem-native mldsa-native mbedtls
+          west packages pip --install --ignore-venv-check
+          west sdk install --version 1.0.1 --gnu-toolchains x86_64-zephyr-elf
+
+      - name: Build and run public firmware checks
+        run: python scripts/check_zephyr.py --output-root "$RUNNER_TEMP/firmware-smoke"
+
+      - name: Retain build and execution logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-zephyr-smoke
+          path: ${{ runner.temp }}/firmware-smoke/*.log
+          if-no-files-found: warn
 
   fleet-coordinator:
     name: Rust fleet coordinator
