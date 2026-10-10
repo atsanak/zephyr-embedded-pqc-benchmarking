@@ -87,8 +87,8 @@ jobs:
         timeout-minutes: 15
         run: |
           west init -l "$GITHUB_WORKSPACE"
-          west update --narrow zephyr
-          west update --narrow mlkem-native mldsa-native mbedtls tf-psa-crypto
+          west config manifest.project-filter '-.*,+zephyr,+mlkem-native,+mldsa-native,+mbedtls,+tf-psa-crypto'
+          west update --narrow
           west packages pip --install --ignore-venv-check
           west sdk install --version 1.0.1 --gnu-toolchains x86_64-zephyr-elf
 
