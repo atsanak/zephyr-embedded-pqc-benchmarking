@@ -24,6 +24,7 @@ The [architecture boundaries](ARCHITECTURE.md) explain the public TLS self-test,
 separate host signing provider and private implementations not shipped here.
 
 Public CI checks result integrity, host C advisor/campaign integration with
-address and undefined-behavior sanitizers, and the Rust component.
-It is not a full Zephyr firmware matrix, physical-board validation or crypto
+address and undefined-behavior sanitizers, the Rust component, and five QEMU
+firmware suites through [west](../scripts/check_zephyr.py).
+It is not a full board/profile matrix, physical-board validation or crypto
 certification. Read the retained slower results alongside the faster ones.

@@ -90,12 +90,25 @@ Install west and the toolchain required by the pinned Zephyr revision in
 [west.yml](west.yml). From a checkout outside an existing west workspace:
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install west==1.5.0
 west init -l .
 west update
+west packages pip --install
+west sdk install --version 1.0.1 --gnu-toolchains x86_64-zephyr-elf
 west zephyr-export
-./scripts/build.sh tests/ztest_primitive qemu_x86_64 build-ztest-primitive
-west build -d build-ztest-primitive -t run
+python scripts/check_zephyr.py
 ```
+
+The smoke runner builds/runs advisor, campaign, ACVP serial, TLS self-test and
+primitive ztests on QEMU. It removes inherited host compiler flags, bounds build
+and run time, keeps separate logs, and stops QEMU only after the terminal ztest
+success marker. Select one suite with `--test deployment_campaign`. Existing
+workspaces only need their virtual environment activated; do not re-initialize them.
+
+Verified locally on Zephyr 4.4.0 / SDK 1.0.1: 49 ztest cases passed across
+these five suites. This is firmware execution in QEMU, not physical-board evidence.
 
 `qemu-system-x86_64` is required to run that target. In a configured workspace,
 `./scripts/run_benchmark.sh` generates new results under `results/local/`;
