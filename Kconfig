@@ -729,6 +729,16 @@ config PQCP_DEPLOYMENT_ADVISOR
 	  QEMU experiments, and review flows where recommendation logic must be
 	  replayable without dynamic allocation.
 
+config PQCP_DEPLOYMENT_CAMPAIGN
+	bool "Enable bounded deployment measurement campaigns"
+	depends on PQCP_DEPLOYMENT_ADVISOR
+	default n
+	help
+	  Summarize up to 64 caller-supplied observations without allocation.
+	  Report integer distribution statistics, failed samples and quality
+	  concerns, then project measurements into an advisor candidate.
+	  This component does not run crypto or measure hardware itself.
+
 endmenu
 
 # =============================================================================
