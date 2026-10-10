@@ -37,6 +37,7 @@ jobs:
         run: |
           bash -n scripts/build.sh
           bash -n scripts/run_benchmark.sh
+          bash -n scripts/check_host_c.sh
 
       - name: Reject accidentally tracked local material
         run: |
@@ -46,23 +47,17 @@ jobs:
           fi
 
   advisor:
-    name: Allocation-free C advisor
+    name: Allocation-free C evidence
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build host regression harness
-        run: |
-          cc -std=c11 -O2 -Wall -Wextra -Werror \
-            -Iinclude \
-            -Itests/host_deployment_advisor/shim \
-            src/deployment_advisor.c \
-            tests/host_deployment_advisor/main.c \
-            -o /tmp/pqcp-deployment-advisor-test
+      - name: Run deterministic advisor and campaign checks
+        run: bash scripts/check_host_c.sh
 
-      - name: Run deterministic advisor checks
-        run: /tmp/pqcp-deployment-advisor-test
+      - name: Run address and undefined-behavior sanitizers
+        run: SANITIZE=1 bash scripts/check_host_c.sh
 
   fleet-coordinator:
     name: Rust fleet coordinator

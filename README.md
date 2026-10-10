@@ -30,7 +30,10 @@ CV description to code and evidence you can check.
   [export tooling](scripts/export_results.py) and [retained evidence](results/final).
 - **On-device decisions:** an [allocation-free advisor](samples/pqcp_deployment_advisor)
   checks resource and evidence constraints, preserves rejected candidates,
-  and ranks feasible choices deterministically.
+  and ranks feasible choices deterministically. The bounded
+  [C campaign accumulator](src/deployment_campaign.c) projects repeated
+  observations into advisor inputs, with integer median/p90/p99/MAD,
+  variance warnings and worst-case resource footprints.
 - **Host-side Rust:** a separate [fleet coordinator](tools/pqcp_fleet_coordinator)
   uses SQLite/WAL, Tokio/Axum, CLI/REST/SSE interfaces, CBOR artifacts and
   encrypted local signing storage. It is an evaluation component, not a
@@ -70,12 +73,16 @@ From the repository root, Python 3.12+ and a C compiler are enough for these che
 
 ```bash
 python3 scripts/verify_public_artifacts.py
-cc -std=c11 -O2 -Wall -Wextra -Werror \
-  -Iinclude -Itests/host_deployment_advisor/shim \
-  src/deployment_advisor.c tests/host_deployment_advisor/main.c \
-  -o /tmp/pqcp-advisor-test
-/tmp/pqcp-advisor-test
+bash scripts/check_host_c.sh
+SANITIZE=1 bash scripts/check_host_c.sh
 ```
+
+These C checks cover campaign-to-advisor integration, failed/missing observations,
+capacity bounds and malformed state, plus AddressSanitizer/UBSan. Campaign inputs
+in the host tests are **synthetic fixtures**, not new performance results.
+Quantiles use floor indexing on sorted samples; campaign stability alone is not
+independent cross-build reproducibility. Enable `CONFIG_PQCP_DEPLOYMENT_CAMPAIGN`
+for the firmware component; it consumes observations, rather than measuring crypto.
 
 ## Build a Zephyr target
 
